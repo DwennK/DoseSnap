@@ -49,11 +49,7 @@ struct ResultView: View {
             WorkflowStep(title: "Sauver", systemImage: "tray.and.arrow.down.fill", isActive: canSave, isComplete: false)
         }
         .padding(12)
-        .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(AppTheme.subtleStroke, lineWidth: 1)
-        )
+        .cardSurface(cornerRadius: 20)
     }
 
     private func analysisSummary(_ analysis: FoodAnalysis) -> some View {
@@ -116,10 +112,10 @@ struct ResultView: View {
                             .foregroundStyle(.secondary)
                     }
                     .padding(16)
-                    .background(AppTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(viewModel.hasVerifiedCarbs ? AppTheme.positive.opacity(0.45) : AppTheme.accent.opacity(0.35), lineWidth: 1)
+                            .stroke(viewModel.hasVerifiedCarbs ? AppTheme.positive.opacity(0.50) : AppTheme.accent.opacity(0.40), lineWidth: 1.5)
                     )
                 }
 
@@ -140,7 +136,7 @@ struct ResultView: View {
                             .stroke((viewModel.hasVerifiedCarbs ? AppTheme.positive : AppTheme.accent).opacity(0.18), lineWidth: 1)
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PressableButtonStyle())
 
                 beverageInputCard
 
@@ -161,9 +157,9 @@ struct ResultView: View {
                     TextField("Optionnel", text: $viewModel.notes, axis: .vertical)
                         .lineLimit(3...6)
                         .padding(14)
-                        .background(AppTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
                                 .stroke(AppTheme.subtleStroke, lineWidth: 1)
                         )
                 }
@@ -206,24 +202,33 @@ struct ResultView: View {
 
             Text(viewModel.calculation?.correctionWasUsed == true ? "Inclut une correction basee sur la glycemie saisie." : "Correction glycemie non incluse.")
                 .font(.footnote)
-                .foregroundStyle(.white)
+                .foregroundStyle(.white.opacity(0.75))
                 .fixedSize(horizontal: false, vertical: true)
 
             Text("Verifiez toujours avec votre propre jugement et vos consignes medicales.")
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.white.opacity(0.92))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(20)
+        .padding(22)
         .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(AppTheme.navyGradient)
+            ZStack(alignment: .topTrailing) {
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(AppTheme.navyGradient)
+
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.35))
+                    .frame(width: 190, height: 190)
+                    .blur(radius: 70)
+                    .offset(x: 60, y: -60)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.white.opacity(0.22), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
         )
-        .shadow(color: AppTheme.navy.opacity(0.12), radius: 14, x: 0, y: 7)
+        .shadow(color: AppTheme.deepNavy.opacity(0.30), radius: 22, x: 0, y: 12)
     }
 
     private var suggestionTitleBlock: some View {
@@ -363,15 +368,15 @@ struct ResultView: View {
             Label("Voir les limites de l'app avant decision", systemImage: "exclamationmark.shield")
                 .font(.footnote.weight(.semibold))
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
+                .padding(13)
                 .foregroundStyle(AppTheme.danger)
-                .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .background(AppTheme.danger.opacity(0.07), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .stroke(AppTheme.danger.opacity(0.16), lineWidth: 1)
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
     }
 
     @ViewBuilder
@@ -564,7 +569,7 @@ struct ResultView: View {
             }
         }
         .padding(15)
-        .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(AppTheme.subtleStroke, lineWidth: 1)
@@ -654,7 +659,7 @@ private struct InfoPill: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(title)
                     .font(.caption2)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.white.opacity(0.72))
                 Text(value)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.white)
@@ -666,10 +671,10 @@ private struct InfoPill: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity)
-        .background(AppTheme.deepNavy.opacity(0.42), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .background(Color.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color.white.opacity(0.18), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.white.opacity(0.16), lineWidth: 1)
         )
     }
 }

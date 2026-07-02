@@ -20,10 +20,11 @@ struct MealThumbnailView: View {
             }
         }
         .frame(width: size, height: size)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.22), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppTheme.ink.opacity(0.08), lineWidth: 1)
         )
+        .shadow(color: AppTheme.ink.opacity(0.08), radius: 5, x: 0, y: 2)
     }
 }

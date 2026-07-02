@@ -15,12 +15,7 @@ struct CardView<Content: View>: View {
         content
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(AppTheme.subtleStroke, lineWidth: 1)
-            )
-            .shadow(color: AppTheme.softShadow, radius: 12, x: 0, y: 6)
+            .cardSurface(cornerRadius: cornerRadius)
     }
 }
 
@@ -31,8 +26,8 @@ struct SectionHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.title3.weight(.heavy))
-                .foregroundStyle(AppTheme.navy)
+                .font(.title3.weight(.bold))
+                .foregroundStyle(AppTheme.ink)
                 .lineLimit(2)
                 .minimumScaleFactor(0.86)
                 .fixedSize(horizontal: false, vertical: true)
@@ -56,24 +51,31 @@ struct ScreenHeader: View {
     var systemImage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
-                IconBadge(systemImage: systemImage, color: AppTheme.accent)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 7) {
+                Image(systemName: systemImage)
+                    .font(.caption.weight(.bold))
 
                 Text(eyebrow.uppercased())
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(AppTheme.accent)
-                    .tracking(1.1)
+                    .tracking(1.3)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundStyle(AppTheme.accent)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+            .background(AppTheme.accent.opacity(0.10), in: Capsule())
+            .overlay(
+                Capsule()
+                    .stroke(AppTheme.accent.opacity(0.14), lineWidth: 1)
+            )
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
-                    .foregroundStyle(AppTheme.navy)
-                    .lineLimit(2)
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppTheme.ink)
+                    .lineLimit(3)
                     .minimumScaleFactor(0.74)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -95,20 +97,18 @@ struct IconBadge: View {
     var systemImage: String
     var color: Color = AppTheme.accent
     var isProminent = false
+    var size: CGFloat = 42
 
     var body: some View {
         Image(systemName: systemImage)
-            .font(.system(size: 16, weight: .bold))
+            .font(.system(size: size * 0.38, weight: .semibold))
             .foregroundStyle(isProminent ? .white : color)
-            .frame(width: 42, height: 42)
+            .frame(width: size, height: size)
             .background(
-                isProminent ? AnyShapeStyle(AppTheme.primaryGradient) : AnyShapeStyle(color.opacity(0.13)),
-                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+                isProminent ? AnyShapeStyle(AppTheme.primaryGradient) : AnyShapeStyle(color.opacity(0.11)),
+                in: RoundedRectangle(cornerRadius: size * 0.36, style: .continuous)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.white.opacity(isProminent ? 0.25 : 0), lineWidth: 1)
-            )
+            .shadow(color: isProminent ? color.opacity(0.30) : .clear, radius: 8, x: 0, y: 4)
     }
 }
 
@@ -123,7 +123,7 @@ struct StatusCapsule: View {
             .foregroundStyle(color)
             .padding(.horizontal, 11)
             .padding(.vertical, 8)
-            .background(color.opacity(0.12), in: Capsule())
+            .background(color.opacity(0.11), in: Capsule())
             .overlay(
                 Capsule()
                     .stroke(color.opacity(0.16), lineWidth: 1)

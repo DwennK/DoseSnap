@@ -146,7 +146,7 @@ struct ScanView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Ajoutez une photo nette")
-                        .font(.title3.weight(.heavy))
+                        .font(.title3.weight(.bold))
                         .foregroundStyle(.white)
                         .lineLimit(2)
                         .minimumScaleFactor(0.82)
@@ -171,14 +171,14 @@ struct ScanView: View {
         } label: {
             Self.photoActionLabel(title: "Camera", systemImage: "camera.fill", color: AppTheme.accent)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
     }
 
     private var photosButton: some View {
         PhotosPicker(selection: $photoItem, matching: .images) {
             Self.photoActionLabel(title: "Photos", systemImage: "photo.fill", color: AppTheme.secondaryAccent)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
     }
 
     nonisolated private static func photoActionLabel(title: String, systemImage: String, color: Color) -> some View {
@@ -190,10 +190,10 @@ struct ScanView: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 46)
             .padding(.horizontal, 12)
-            .background(color.opacity(0.12), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(color.opacity(0.10), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(color.opacity(0.16), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(color.opacity(0.18), lineWidth: 1)
             )
     }
 

@@ -6,7 +6,7 @@ struct SafetyWarningView: View {
     private var color: Color {
         switch warning.severity {
         case .info:
-            AppTheme.accent
+            AppTheme.softBlue
         case .caution:
             AppTheme.warning
         case .critical:
@@ -17,15 +17,16 @@ struct SafetyWarningView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: warning.severity == .critical ? "exclamationmark.triangle.fill" : "info.circle.fill")
-                .font(.system(size: 16, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(.white)
-                .frame(width: 32, height: 32)
-                .background(color, in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+                .frame(width: 30, height: 30)
+                .background(color, in: Circle())
+                .shadow(color: color.opacity(0.30), radius: 6, x: 0, y: 3)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(warning.title)
                     .font(.subheadline.weight(.bold))
-                    .foregroundStyle(AppTheme.navy)
+                    .foregroundStyle(AppTheme.ink)
 
                 Text(warning.message)
                     .font(.footnote)
@@ -33,11 +34,11 @@ struct SafetyWarningView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(15)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(color.opacity(0.18), lineWidth: 1)
         )
     }

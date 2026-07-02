@@ -87,9 +87,9 @@ struct NutritionPackageView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.82)
                         .padding(14)
-                        .background(AppTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
                                 .stroke(AppTheme.subtleStroke, lineWidth: 1)
                         )
 
@@ -106,20 +106,20 @@ struct NutritionPackageView: View {
                             }
                         }
                         .frame(width: 50, height: 50)
+                        .foregroundStyle(.white)
+                        .background(AppTheme.primaryGradient, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .shadow(color: AppTheme.accent.opacity(0.28), radius: 10, x: 0, y: 5)
                     }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.white)
-                    .background(AppTheme.primaryGradient, in: RoundedRectangle(cornerRadius: 17, style: .continuous))
-                    .shadow(color: AppTheme.accent.opacity(0.08), radius: 7, x: 0, y: 4)
+                    .buttonStyle(PressableButtonStyle())
                     .disabled(viewModel.isLookingUpBarcode)
                 }
 
                 TextField("Nom du produit ou repas", text: $viewModel.productName)
                     .textInputAutocapitalization(.words)
                     .padding(14)
-                    .background(AppTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
                             .stroke(AppTheme.subtleStroke, lineWidth: 1)
                     )
             }
@@ -202,7 +202,7 @@ struct NutritionPackageView: View {
         } label: {
             Self.labelAction(title: "Camera", systemImage: "camera.fill", color: AppTheme.accent)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
         .disabled(viewModel.isReadingLabel)
     }
 
@@ -210,7 +210,7 @@ struct NutritionPackageView: View {
         PhotosPicker(selection: $photoItem, matching: .images) {
             Self.labelAction(title: title, systemImage: "text.viewfinder", color: AppTheme.secondaryAccent)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
         .disabled(viewModel.isReadingLabel)
     }
 
@@ -223,10 +223,10 @@ struct NutritionPackageView: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 54)
             .padding(.horizontal, 12)
-            .background(color.opacity(0.12), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(color.opacity(0.10), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(color.opacity(0.16), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(color.opacity(0.18), lineWidth: 1)
             )
     }
 

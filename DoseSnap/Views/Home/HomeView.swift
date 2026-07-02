@@ -36,10 +36,10 @@ struct HomeView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("DoseSnap")
-                        .font(.system(size: 34, weight: .heavy, design: .rounded))
-                        .foregroundStyle(AppTheme.navy)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppTheme.ink)
                     Text("Repas, glucides, suggestion.")
-                        .font(.callout.weight(.semibold))
+                        .font(.callout.weight(.medium))
                         .foregroundStyle(AppTheme.mutedInk)
                 }
 
@@ -57,7 +57,7 @@ struct HomeView: View {
                 )
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
     }
 
     private var actions: some View {
@@ -67,7 +67,7 @@ struct HomeView: View {
                 packageAction
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
     }
 
     private var actionColumns: [GridItem] {
@@ -161,7 +161,7 @@ struct HomeView: View {
                 }
             }
         }
-        .padding(.top, 40)
+        .padding(.top, 8)
     }
 
     private var recentHistory: some View {
@@ -230,16 +230,25 @@ private struct HomeHeroCard: View {
             )
 
             VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles")
+                            .font(.caption2.weight(.bold))
+                        Text("ANALYSE PHOTO")
+                            .font(.caption2.weight(.bold))
+                            .tracking(1.2)
+                    }
+                    .foregroundStyle(AppTheme.secondaryAccent)
+
                     Text("Scanner le repas")
-                        .font(.system(size: 34, weight: .heavy, design: .rounded))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .lineLimit(2)
                         .minimumScaleFactor(0.78)
 
-                    Text("Photo, verification, sauvegarde.")
-                        .font(.callout.weight(.semibold))
-                        .foregroundStyle(.white)
+                    Text("Photo, vérification, sauvegarde.")
+                        .font(.callout.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.85))
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -247,18 +256,27 @@ private struct HomeHeroCard: View {
                 HStack(spacing: 10) {
                     HeroMetric(title: "Ratio", value: ratio)
                     HeroMetric(title: "Limite", value: limit)
+
+                    Spacer(minLength: 0)
+
+                    Image(systemName: "arrow.right")
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(AppTheme.deepNavy)
+                        .frame(width: 44, height: 44)
+                        .background(.white, in: Circle())
+                        .shadow(color: .black.opacity(0.20), radius: 8, x: 0, y: 4)
                 }
             }
             .padding(20)
         }
         .frame(maxWidth: .infinity)
         .frame(minHeight: 244)
-        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .stroke(Color.white.opacity(0.24), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(Color.white.opacity(0.16), lineWidth: 1)
         )
-        .shadow(color: AppTheme.navy.opacity(0.12), radius: 14, x: 0, y: 7)
+        .shadow(color: AppTheme.deepNavy.opacity(0.25), radius: 24, x: 0, y: 14)
     }
 }
 
@@ -269,21 +287,21 @@ private struct HeroMetric: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(.white)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.72))
 
             Text(value)
-                .font(.caption.weight(.heavy))
+                .font(.caption.weight(.bold))
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(AppTheme.deepNavy.opacity(0.58), in: Capsule())
+        .padding(.horizontal, 13)
+        .padding(.vertical, 9)
+        .background(.white.opacity(0.14), in: Capsule())
         .overlay(
             Capsule()
-                .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                .stroke(Color.white.opacity(0.22), lineWidth: 1)
         )
     }
 }
@@ -295,19 +313,21 @@ private struct QuickActionTile: View {
     var color: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 IconBadge(systemImage: systemImage, color: color)
                 Spacer()
                 Image(systemName: "arrow.up.right")
-                    .font(.caption.weight(.bold))
+                    .font(.caption2.weight(.bold))
                     .foregroundStyle(color)
+                    .frame(width: 26, height: 26)
+                    .background(color.opacity(0.10), in: Circle())
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.headline.weight(.bold))
-                    .foregroundStyle(AppTheme.navy)
+                    .foregroundStyle(AppTheme.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
                 Text(subtitle)
@@ -319,11 +339,6 @@ private struct QuickActionTile: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .stroke(color.opacity(0.18), lineWidth: 1)
-        )
-        .shadow(color: color.opacity(0.06), radius: 10, x: 0, y: 6)
+        .cardSurface(cornerRadius: 24)
     }
 }

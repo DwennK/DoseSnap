@@ -12,24 +12,27 @@ struct ContentView: View {
             }
         }
         .environmentObject(appState)
+        .preferredColorScheme(.light)
     }
 }
 
 private struct MainTabView: View {
     init() {
         let tabAppearance = UITabBarAppearance()
-        tabAppearance.configureWithOpaqueBackground()
-        tabAppearance.backgroundColor = UIColor(AppTheme.warmSurface)
-        tabAppearance.shadowColor = UIColor(AppTheme.subtleStroke)
-        UITabBar.appearance().isTranslucent = false
-        UITabBar.appearance().backgroundColor = UIColor(AppTheme.warmSurface)
+        tabAppearance.configureWithDefaultBackground()
+        tabAppearance.backgroundColor = UIColor(AppTheme.warmSurface.opacity(0.85))
+        tabAppearance.shadowColor = UIColor(AppTheme.ink.opacity(0.08))
         UITabBar.appearance().standardAppearance = tabAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
 
         let navigationAppearance = UINavigationBarAppearance()
-        navigationAppearance.configureWithOpaqueBackground()
-        navigationAppearance.backgroundColor = UIColor(AppTheme.cream)
+        navigationAppearance.configureWithDefaultBackground()
+        navigationAppearance.backgroundColor = UIColor(AppTheme.cream.opacity(0.85))
         navigationAppearance.shadowColor = .clear
+        navigationAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor(AppTheme.ink),
+            .font: UIFont.systemFont(ofSize: 17, weight: .bold)
+        ]
         UINavigationBar.appearance().standardAppearance = navigationAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navigationAppearance
         UINavigationBar.appearance().compactAppearance = navigationAppearance
@@ -59,8 +62,6 @@ private struct MainTabView: View {
             }
         }
         .tint(AppTheme.accent)
-        .toolbarBackground(AppTheme.warmSurface, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
     }
 }
 

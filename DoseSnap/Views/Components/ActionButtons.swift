@@ -15,6 +15,7 @@ struct PrimaryActionButton: View {
                         .tint(.white)
                 } else {
                     Image(systemName: systemImage)
+                        .font(.headline.weight(.bold))
                 }
 
                 Text(title)
@@ -24,24 +25,22 @@ struct PrimaryActionButton: View {
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 58)
+            .frame(minHeight: 56)
             .padding(.horizontal, 14)
+            .foregroundStyle(isDisabled ? AppTheme.mutedInk : .white)
+            .background(
+                isDisabled
+                    ? AnyShapeStyle(AppTheme.disabledSurface)
+                    : AnyShapeStyle(AppTheme.primaryGradient),
+                in: RoundedRectangle(cornerRadius: 19, style: .continuous)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                    .stroke(Color.white.opacity(isDisabled ? 0 : 0.20), lineWidth: 1)
+            )
+            .shadow(color: isDisabled ? .clear : AppTheme.accent.opacity(0.30), radius: 14, x: 0, y: 7)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(isDisabled ? AppTheme.navy : .white)
-        .background(
-            LinearGradient(
-                colors: isDisabled ? [AppTheme.disabledSurface, AppTheme.disabledSurface] : [AppTheme.secondaryAccent, AppTheme.accent],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: RoundedRectangle(cornerRadius: 22, style: .continuous)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(isDisabled ? AppTheme.subtleStroke : Color.white.opacity(0.22), lineWidth: 1)
-        )
-        .shadow(color: isDisabled ? .clear : AppTheme.accent.opacity(0.10), radius: 10, x: 0, y: 5)
+        .buttonStyle(PressableButtonStyle())
         .disabled(isDisabled || isLoading)
     }
 }
@@ -68,13 +67,14 @@ struct SecondaryActionButton: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 52)
             .padding(.horizontal, 14)
+            .foregroundStyle(tintColor)
+            .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 19, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                    .stroke(tintColor.opacity(0.22), lineWidth: 1.2)
+            )
+            .shadow(color: AppTheme.ink.opacity(0.04), radius: 8, x: 0, y: 4)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(tintColor)
-        .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(tintColor.opacity(0.18), lineWidth: 1)
-        )
+        .buttonStyle(PressableButtonStyle())
     }
 }

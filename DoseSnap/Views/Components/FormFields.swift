@@ -9,7 +9,7 @@ struct DecimalField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.subheadline.weight(.semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundStyle(AppTheme.mutedInk)
 
             HStack {
@@ -28,9 +28,9 @@ struct DecimalField: View {
                 }
             }
             .padding(15)
-            .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
                     .stroke(AppTheme.subtleStroke, lineWidth: 1)
             )
         }
@@ -45,7 +45,7 @@ struct NumericProfileField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.subheadline.weight(.semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundStyle(AppTheme.mutedInk)
 
             HStack {
@@ -62,9 +62,9 @@ struct NumericProfileField: View {
                     .multilineTextAlignment(.trailing)
             }
             .padding(15)
-            .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
                     .stroke(AppTheme.subtleStroke, lineWidth: 1)
             )
         }
@@ -78,7 +78,7 @@ struct MetricRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            IconBadge(systemImage: systemImage)
+            IconBadge(systemImage: systemImage, size: 36)
 
             Text(title)
                 .font(.subheadline)
@@ -90,7 +90,7 @@ struct MetricRow: View {
 
             Text(value)
                 .font(.subheadline.weight(.bold))
-                .foregroundStyle(AppTheme.navy)
+                .foregroundStyle(AppTheme.ink)
                 .lineLimit(2)
                 .minimumScaleFactor(0.78)
                 .multilineTextAlignment(.trailing)

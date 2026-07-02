@@ -149,9 +149,9 @@ struct SettingsView: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.70)
                         .padding(14)
-                        .background(AppTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .background(AppTheme.fieldSurface, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
                                 .stroke(AppTheme.subtleStroke, lineWidth: 1)
                         )
                 }

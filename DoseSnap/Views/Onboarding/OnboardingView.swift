@@ -55,11 +55,11 @@ struct OnboardingView: View {
                     AppTheme.primaryGradient,
                     in: RoundedRectangle(cornerRadius: 19, style: .continuous)
                 )
-                .shadow(color: AppTheme.accent.opacity(0.08), radius: 8, x: 0, y: 4)
+                .shadow(color: AppTheme.accent.opacity(0.30), radius: 12, x: 0, y: 6)
 
             Text(viewModel.currentStep.title)
-                .font(.system(size: 34, weight: .heavy, design: .rounded))
-                .foregroundStyle(AppTheme.navy)
+                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .foregroundStyle(AppTheme.ink)
                 .lineLimit(3)
                 .minimumScaleFactor(0.74)
                 .fixedSize(horizontal: false, vertical: true)
