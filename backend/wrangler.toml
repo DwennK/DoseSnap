@@ -1,0 +1,22 @@
+name = "dosesnap-api"
+main = "src/index.ts"
+compatibility_date = "2026-06-18"
+
+[vars]
+MINIMAX_BASE_URL = "https://api.minimax.io/v1"
+MINIMAX_MODEL = "MiniMax-M3"
+MAX_IMAGE_BYTES = "5242880"
+LOG_LEVEL = "info"
+REQUIRE_DEVICE_INTEGRITY = "false"
+
+[[ratelimits]]
+name = "ANALYZE_RATE_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 30
+  period = 60
+
+# Configure secrets before deploy:
+# wrangler secret put MINIMAX_API_KEY
+# wrangler secret put APP_API_TOKEN

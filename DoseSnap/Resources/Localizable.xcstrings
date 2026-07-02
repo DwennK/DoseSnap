@@ -1,0 +1,15 @@
+{
+  "sourceLanguage" : "fr",
+  "strings" : {
+    "DoseSnap" : {
+      "extractionState" : "manual"
+    },
+    "Suggestion indicative" : {
+      "extractionState" : "manual"
+    },
+    "Verifiez toujours avec votre propre jugement et vos consignes medicales." : {
+      "extractionState" : "manual"
+    }
+  },
+  "version" : "1.0"
+}

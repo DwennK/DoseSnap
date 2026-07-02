@@ -1,0 +1,46 @@
+# Xcode
+DerivedData/
+.build/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcuserdatad/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.mobileprovision
+
+# Node / Cloudflare backend
+backend/node_modules/
+backend/dist/
+backend/.wrangler/
+backend/.dev.vars
+backend/.dev.vars.*
+!backend/.dev.vars.example
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p8
+*.p12
+*.cer
+*.crt
+*.der
+secrets.*
+*.secret
+*.secrets
+
+# macOS
+.DS_Store

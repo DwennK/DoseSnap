@@ -1,0 +1,29 @@
+{
+  "name": "dosesnap-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:mock": "wrangler dev --var USE_MOCK_VISION:true",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run test"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.7.2",
+    "hono": "^4.10.7",
+    "zod": "^4.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260617.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.101.0"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1",
+    "ws": "^8.21.0"
+  }
+}
