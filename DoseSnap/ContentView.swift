@@ -13,6 +13,15 @@ struct ContentView: View {
         }
         .environmentObject(appState)
         .preferredColorScheme(.light)
+        .overlay(alignment: .bottom) {
+            if let toast = appState.toast {
+                ToastBanner(toast: toast)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 92)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(response: 0.34, dampingFraction: 0.86), value: appState.toast)
     }
 }
 
@@ -58,10 +67,30 @@ private struct MainTabView: View {
                 SettingsView()
             }
             .tabItem {
-                Label("Reglages", systemImage: "gearshape")
+                Label("Réglages", systemImage: "gearshape")
             }
         }
         .tint(AppTheme.accent)
+    }
+}
+
+private struct ToastBanner: View {
+    var toast: AppToast
+
+    var body: some View {
+        Label(toast.message, systemImage: toast.systemImage)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(AppTheme.deepNavy.opacity(0.94), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+            )
+            .shadow(color: AppTheme.deepNavy.opacity(0.26), radius: 16, x: 0, y: 8)
+            .accessibilityAddTraits(.isStaticText)
     }
 }
 

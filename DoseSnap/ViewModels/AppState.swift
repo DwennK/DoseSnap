@@ -1,11 +1,18 @@
 import Foundation
 import Combine
 
+struct AppToast: Identifiable, Equatable {
+    let id = UUID()
+    var message: String
+    var systemImage: String
+}
+
 @MainActor
 final class AppState: ObservableObject {
     @Published var profile: UserProfile
     @Published var mealHistory: [MealEntry]
     @Published var storageErrorMessage: String?
+    @Published var toast: AppToast?
 
     private let storageService: any StorageService
 
@@ -29,6 +36,7 @@ final class AppState: ObservableObject {
     func addMeal(_ meal: MealEntry) {
         mealHistory.insert(meal, at: 0)
         persistMeals()
+        showToast(message: "Repas sauvegardé", systemImage: "checkmark.circle.fill")
     }
 
     func likelyDuplicateMeal(for meal: MealEntry) -> MealEntry? {
@@ -39,6 +47,12 @@ final class AppState: ObservableObject {
         guard let index = mealHistory.firstIndex(where: { $0.id == meal.id }) else { return }
         mealHistory[index] = meal
         persistMeals()
+    }
+
+    func deleteMeal(_ meal: MealEntry) {
+        mealHistory.removeAll { $0.id == meal.id }
+        persistMeals()
+        showToast(message: "Repas supprimé", systemImage: "trash.fill")
     }
 
     func clearHistory() {
@@ -54,6 +68,21 @@ final class AppState: ObservableObject {
     func seedDemoHistory() {
         mealHistory = DemoDataSeeder.demoMeals()
         persistMeals()
+    }
+
+    func showToast(message: String, systemImage: String) {
+        let toast = AppToast(message: message, systemImage: systemImage)
+        self.toast = toast
+
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                if self?.toast == toast {
+                    self?.toast = nil
+                }
+            }
+        }
     }
 
     private func persistProfile() {

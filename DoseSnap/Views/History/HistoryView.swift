@@ -5,43 +5,63 @@ struct HistoryView: View {
     @StateObject private var viewModel = HistoryViewModel()
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+        List {
+            Section {
                 ScreenHeader(
                     eyebrow: "Historique local",
-                    title: "Vos repas sauvegardes, prets a comparer.",
-                    subtitle: "Les donnees restent sur cet iPhone et gardent le contexte du calcul.",
+                    title: "Vos repas sauvegardés, prêts à comparer.",
+                    subtitle: "Les données restent sur cet iPhone et gardent le contexte du calcul.",
                     systemImage: "clock.arrow.circlepath"
                 )
+            }
+            .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
 
-                if viewModel.entries.isEmpty {
+            if viewModel.entries.isEmpty {
+                Section {
                     CardView {
                         VStack(alignment: .leading, spacing: 12) {
                             IconBadge(systemImage: "clock.arrow.circlepath", color: AppTheme.lavender)
 
-                            Text("Aucun repas sauvegarde")
+                            Text("Aucun repas sauvegardé")
                                 .font(.headline.weight(.bold))
 
-                            Text("Les estimations sauvegardees depuis le scan ou la saisie manuelle apparaitront ici.")
+                            Text("Les estimations sauvegardées depuis le scan ou la saisie manuelle apparaîtront ici.")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
                     }
-                } else {
-                    VStack(spacing: 12) {
-                        ForEach(viewModel.entries) { meal in
-                            HistoryMealCard(meal: meal, glucoseUnit: appState.profile.glucoseUnit) { usefulness in
-                                var updated = meal
-                                updated.usefulness = usefulness
-                                appState.updateMeal(updated)
+                }
+                .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+            } else {
+                Section {
+                    ForEach(viewModel.entries) { meal in
+                        HistoryMealCard(meal: meal, glucoseUnit: appState.profile.glucoseUnit) { usefulness in
+                            var updated = meal
+                            updated.usefulness = usefulness
+                            appState.updateMeal(updated)
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                appState.deleteMeal(meal)
+                            } label: {
+                                Label("Supprimer", systemImage: "trash")
                             }
                         }
+                        .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
                 }
+                .listRowBackground(Color.clear)
             }
-            .padding(20)
-            .padding(.bottom, 150)
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .contentMargins(.bottom, 24, for: .scrollContent)
         .background(AppBackground())
         .navigationTitle("Historique")
         .navigationBarTitleDisplayMode(.inline)
@@ -82,12 +102,12 @@ private struct HistoryMealCard: View {
                 }
 
                 VStack(spacing: 10) {
-                    MetricRow(title: "Glucides confirmes", value: DoseFormatter.carbs(meal.confirmedCarbs), systemImage: "chart.bar")
+                    MetricRow(title: "Glucides confirmés", value: DoseFormatter.carbs(meal.confirmedCarbs), systemImage: "chart.bar")
                     MetricRow(title: "Fourchette", value: "\(DoseFormatter.carbs(meal.carbsRangeLow))-\(DoseFormatter.carbs(meal.carbsRangeHigh))", systemImage: "arrow.left.and.right")
                     MetricRow(title: "Suggestion indicative", value: DoseFormatter.dose(meal.suggestedDose), systemImage: "drop")
 
                     if let glucose = meal.glucoseValue {
-                        MetricRow(title: "Glycemie saisie", value: DoseFormatter.glucose(glucose, unit: glucoseUnit), systemImage: "waveform.path.ecg")
+                        MetricRow(title: "Glycémie saisie", value: DoseFormatter.glucose(glucose, unit: glucoseUnit), systemImage: "waveform.path.ecg")
                     }
                 }
 
