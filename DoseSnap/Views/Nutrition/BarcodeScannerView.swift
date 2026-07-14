@@ -22,17 +22,18 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
     private let captureSession = AVCaptureSession()
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var didDetectCode = false
+    private var isScannerConfigured = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        configureScanner()
         configureOverlay()
+        configureScannerWithPermission()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if !captureSession.isRunning {
+        if isScannerConfigured && !captureSession.isRunning {
             DispatchQueue.global(qos: .userInitiated).async { [captureSession] in
                 captureSession.startRunning()
             }
@@ -64,17 +65,68 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
         onCodeDetected?(code)
     }
 
+    private func configureScannerWithPermission() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            configureScanner()
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] isGranted in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    if isGranted {
+                        self.configureScanner()
+                        DispatchQueue.global(qos: .userInitiated).async { [captureSession = self.captureSession] in
+                            captureSession.startRunning()
+                        }
+                    } else {
+                        self.showScannerUnavailable(
+                            title: "Caméra refusée",
+                            message: "Autorisez DoseSnap dans Réglages pour scanner un code-barres.",
+                            showsSettingsButton: true
+                        )
+                    }
+                }
+            }
+        case .denied, .restricted:
+            showScannerUnavailable(
+                title: "Caméra refusée",
+                message: "Autorisez DoseSnap dans Réglages pour scanner un code-barres.",
+                showsSettingsButton: true
+            )
+        @unknown default:
+            showScannerUnavailable(
+                title: "Scanner indisponible",
+                message: "La caméra n'a pas pu être initialisée sur cet appareil.",
+                showsSettingsButton: false
+            )
+        }
+    }
+
     private func configureScanner() {
+        guard !isScannerConfigured else { return }
+
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video),
               let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
               captureSession.canAddInput(videoInput) else {
+            showScannerUnavailable(
+                title: "Scanner indisponible",
+                message: "La caméra n'a pas pu être initialisée sur cet appareil.",
+                showsSettingsButton: false
+            )
             return
         }
 
         captureSession.addInput(videoInput)
 
         let metadataOutput = AVCaptureMetadataOutput()
-        guard captureSession.canAddOutput(metadataOutput) else { return }
+        guard captureSession.canAddOutput(metadataOutput) else {
+            showScannerUnavailable(
+                title: "Scanner indisponible",
+                message: "La lecture du code-barres n'a pas pu être configurée.",
+                showsSettingsButton: false
+            )
+            return
+        }
 
         captureSession.addOutput(metadataOutput)
         metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
@@ -91,8 +143,9 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.frame = view.bounds
-        view.layer.addSublayer(previewLayer)
+        view.layer.insertSublayer(previewLayer, at: 0)
         self.previewLayer = previewLayer
+        isScannerConfigured = true
     }
 
     private func configureOverlay() {
@@ -140,5 +193,82 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
 
     @objc private func closeTapped() {
         onCancel?()
+    }
+
+    private func showScannerUnavailable(title: String, message: String, showsSettingsButton: Bool) {
+        let container = UIView()
+        container.backgroundColor = UIColor(AppTheme.deepNavy)
+        container.translatesAutoresizingMaskIntoConstraints = false
+
+        let icon = UIImageView(image: UIImage(systemName: "camera.badge.exclamationmark"))
+        icon.tintColor = UIColor(AppTheme.secondaryAccent)
+        icon.contentMode = .scaleAspectFit
+        icon.translatesAutoresizingMaskIntoConstraints = false
+
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.textColor = .white
+        titleLabel.font = .preferredFont(forTextStyle: .title2)
+        titleLabel.adjustsFontForContentSizeCategory = true
+        titleLabel.textAlignment = .center
+
+        let messageLabel = UILabel()
+        messageLabel.text = message
+        messageLabel.textColor = UIColor.white.withAlphaComponent(0.78)
+        messageLabel.font = .preferredFont(forTextStyle: .body)
+        messageLabel.adjustsFontForContentSizeCategory = true
+        messageLabel.textAlignment = .center
+        messageLabel.numberOfLines = 0
+
+        let closeButton = UIButton(type: .system)
+        closeButton.setTitle("Fermer", for: .normal)
+        closeButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        closeButton.tintColor = .white
+        closeButton.backgroundColor = UIColor(AppTheme.accent)
+        closeButton.layer.cornerRadius = 16
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
+
+        let stack = UIStackView(arrangedSubviews: [icon, titleLabel, messageLabel, closeButton])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 16
+        stack.translatesAutoresizingMaskIntoConstraints = false
+
+        container.addSubview(stack)
+        view.addSubview(container)
+
+        let constraints: [NSLayoutConstraint] = [
+            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            container.topAnchor.constraint(equalTo: view.topAnchor),
+            container.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            icon.widthAnchor.constraint(equalToConstant: 56),
+            icon.heightAnchor.constraint(equalToConstant: 56),
+
+            stack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 28),
+            stack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -28),
+            stack.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+
+            closeButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 180),
+            closeButton.heightAnchor.constraint(equalToConstant: 52)
+        ]
+
+        if showsSettingsButton {
+            let settingsButton = UIButton(type: .system)
+            settingsButton.setTitle("Ouvrir Réglages", for: .normal)
+            settingsButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+            settingsButton.tintColor = UIColor(AppTheme.secondaryAccent)
+            settingsButton.addTarget(self, action: #selector(openSettingsTapped), for: .touchUpInside)
+            stack.addArrangedSubview(settingsButton)
+        }
+
+        NSLayoutConstraint.activate(constraints)
+    }
+
+    @objc private func openSettingsTapped() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
