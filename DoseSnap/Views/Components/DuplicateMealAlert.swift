@@ -6,7 +6,7 @@ struct DuplicateMealAlertModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.alert(
-            "Repas similaire deja sauvegarde",
+            "Repas similaire déjà sauvegardé",
             isPresented: Binding(
                 get: { duplicateMeal != nil },
                 set: { isPresented in
@@ -17,7 +17,7 @@ struct DuplicateMealAlertModifier: ViewModifier {
             ),
             presenting: duplicateMeal
         ) { _ in
-            Button("Sauvegarder quand meme", role: .destructive) {
+            Button("Sauvegarder quand même", role: .destructive) {
                 onConfirm()
                 duplicateMeal = nil
             }
@@ -26,7 +26,7 @@ struct DuplicateMealAlertModifier: ViewModifier {
                 duplicateMeal = nil
             }
         } message: { meal in
-            Text("Un repas proche a ete sauvegarde il y a moins de 2 minutes : \(meal.estimatedMealName), \(DoseFormatter.carbs(meal.confirmedCarbs)). Confirmez uniquement si c'est volontaire.")
+            Text("Un repas proche a été sauvegardé il y a moins de 2 minutes : \(meal.estimatedMealName), \(DoseFormatter.carbs(meal.confirmedCarbs)). Confirmez uniquement si c'est volontaire.")
         }
     }
 }

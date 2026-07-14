@@ -17,8 +17,8 @@ enum InputValidationRules {
             profile.insulinToCarbRatio > maximumPlausibleInsulinToCarbRatio {
             warnings.append(
                 SafetyWarning(
-                    title: "Ratio a verifier",
-                    message: "Le ratio insuline/glucides semble hors plage habituelle. Verifiez la valeur avant tout calcul.",
+                    title: "Ratio à vérifier",
+                    message: "Le ratio insuline/glucides semble hors plage habituelle. Vérifiez la valeur avant tout calcul.",
                     severity: .critical
                 )
             )
@@ -27,8 +27,8 @@ enum InputValidationRules {
         if !profile.glucoseUnit.isPlausibleCorrectionFactor(profile.correctionFactor) {
             warnings.append(
                 SafetyWarning(
-                    title: "Facteur de correction a verifier",
-                    message: "Le facteur de correction semble incoherent pour l'unite choisie.",
+                    title: "Facteur de correction à vérifier",
+                    message: "Le facteur de correction semble incohérent pour l'unité choisie.",
                     severity: .critical
                 )
             )
@@ -37,8 +37,8 @@ enum InputValidationRules {
         if !profile.glucoseUnit.isPlausibleTarget(profile.targetGlucose) {
             warnings.append(
                 SafetyWarning(
-                    title: "Cible glycemie a verifier",
-                    message: "La cible glycemie semble hors plage plausible pour l'unite choisie.",
+                    title: "Cible glycémie à vérifier",
+                    message: "La cible glycémie semble hors plage plausible pour l'unité choisie.",
                     severity: .critical
                 )
             )
@@ -49,8 +49,8 @@ enum InputValidationRules {
             profile.maxSuggestedDose > maximumPlausibleDoseLimit {
             warnings.append(
                 SafetyWarning(
-                    title: "Limite de dose a verifier",
-                    message: "La dose maximale par suggestion est tres elevee. Reduisez-la ou confirmez vos reglages medicaux.",
+                    title: "Limite de dose à vérifier",
+                    message: "La dose maximale par suggestion est très élevée. Réduisez-la ou confirmez vos réglages médicaux.",
                     severity: .critical
                 )
             )
@@ -71,8 +71,8 @@ enum InputValidationRules {
         if carbs > maximumPlausibleCarbs {
             warnings.append(
                 SafetyWarning(
-                    title: "Glucides a verifier",
-                    message: "La valeur saisie depasse \(DoseFormatter.carbs(maximumPlausibleCarbs)). L'app bloque la suggestion jusqu'a correction.",
+                    title: "Glucides à vérifier",
+                    message: "La valeur saisie dépasse \(DoseFormatter.carbs(maximumPlausibleCarbs)). L'app bloque la suggestion jusqu'à correction.",
                     severity: .critical
                 )
             )
@@ -81,8 +81,8 @@ enum InputValidationRules {
         if let glucose, !glucoseUnit.isPlausibleGlucose(glucose) {
             warnings.append(
                 SafetyWarning(
-                    title: "Glycemie a verifier",
-                    message: "La glycemie saisie semble hors plage plausible. Verifiez l'unite et la valeur.",
+                    title: "Glycémie à vérifier",
+                    message: "La glycémie saisie semble hors plage plausible. Vérifiez l'unité et la valeur.",
                     severity: .critical
                 )
             )
@@ -91,8 +91,8 @@ enum InputValidationRules {
         if activeInsulin > maximumPlausibleActiveInsulin {
             warnings.append(
                 SafetyWarning(
-                    title: "Insuline active a verifier",
-                    message: "L'insuline active saisie semble tres elevee. Verifiez la valeur avant le calcul.",
+                    title: "Insuline active à vérifier",
+                    message: "L'insuline active saisie semble très élevée. Vérifiez la valeur avant le calcul.",
                     severity: .critical
                 )
             )
@@ -102,8 +102,8 @@ enum InputValidationRules {
             if beverageInput.volumeMl > maximumPlausibleBeverageVolumeMl {
                 warnings.append(
                     SafetyWarning(
-                        title: "Volume boisson a verifier",
-                        message: "Le volume de boisson saisi semble trop eleve. Verifiez les millilitres.",
+                        title: "Volume boisson à vérifier",
+                        message: "Le volume de boisson saisi semble trop élevé. Vérifiez les millilitres.",
                         severity: .critical
                     )
                 )
@@ -112,8 +112,8 @@ enum InputValidationRules {
             if beverageInput.estimatedCarbs > maximumPlausibleBeverageCarbs {
                 warnings.append(
                     SafetyWarning(
-                        title: "Boisson tres sucree",
-                        message: "Les glucides de la boisson sont tres eleves. Verifiez l'etiquette, le volume et l'unite.",
+                        title: "Boisson très sucrée",
+                        message: "Les glucides de la boisson sont très élevés. Vérifiez l'étiquette, le volume et l'unité.",
                         severity: .critical
                     )
                 )

@@ -44,7 +44,7 @@ struct ResultView: View {
         HStack(spacing: 8) {
             WorkflowStep(title: "Scan", systemImage: "camera.fill", isActive: false, isComplete: true)
             DividerLine()
-            WorkflowStep(title: "Verifier", systemImage: "checkmark.circle.fill", isActive: !viewModel.hasVerifiedCarbs, isComplete: viewModel.hasVerifiedCarbs)
+            WorkflowStep(title: "Vérifier", systemImage: "checkmark.circle.fill", isActive: !viewModel.hasVerifiedCarbs, isComplete: viewModel.hasVerifiedCarbs)
             DividerLine()
             WorkflowStep(title: "Sauver", systemImage: "tray.and.arrow.down.fill", isActive: canSave, isComplete: false)
         }
@@ -93,8 +93,8 @@ struct ResultView: View {
         CardView {
             VStack(alignment: .leading, spacing: 16) {
                 SectionHeader(
-                    title: "Verifier avant sauvegarde",
-                    subtitle: "Corrigez les glucides, ajoutez la glycemie si utile, puis confirmez."
+                    title: "Vérifier avant sauvegarde",
+                    subtitle: "Corrigez les glucides, ajoutez la glycémie si utile, puis confirmez."
                 )
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -124,7 +124,7 @@ struct ResultView: View {
                 } label: {
                     HStack(spacing: 10) {
                         Image(systemName: viewModel.hasVerifiedCarbs ? "checkmark.circle.fill" : "circle")
-                        Text("J'ai verifie les glucides")
+                        Text("J'ai vérifié les glucides")
                             .fontWeight(.semibold)
                         Spacer()
                     }
@@ -200,12 +200,12 @@ struct ResultView: View {
                 }
             }
 
-            Text(viewModel.calculation?.correctionWasUsed == true ? "Inclut une correction basee sur la glycemie saisie." : "Correction glycemie non incluse.")
+            Text(viewModel.calculation?.correctionWasUsed == true ? "Inclut une correction basée sur la glycémie saisie." : "Correction glycémie non incluse.")
                 .font(.footnote)
                 .foregroundStyle(.white.opacity(0.75))
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("Verifiez toujours avec votre propre jugement et vos consignes medicales.")
+            Text("Vérifiez toujours avec votre propre jugement et vos consignes médicales.")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.92))
                 .fixedSize(horizontal: false, vertical: true)
@@ -263,7 +263,7 @@ struct ResultView: View {
 
     private var verificationCapsule: some View {
         StatusCapsule(
-            title: viewModel.hasVerifiedCarbs ? "Verifie" : "A verifier",
+            title: viewModel.hasVerifiedCarbs ? "Vérifié" : "À vérifier",
             systemImage: viewModel.hasVerifiedCarbs ? "checkmark.seal.fill" : "exclamationmark.triangle.fill",
             color: viewModel.hasVerifiedCarbs ? AppTheme.positive : AppTheme.warning
         )
@@ -311,7 +311,7 @@ struct ResultView: View {
             SafetyWarningView(
                 warning: SafetyWarning(
                     title: "Suggestion indisponible",
-                    message: "Completez le profil et verifiez les valeurs saisies pour afficher une suggestion indicative.",
+                    message: "Complétez le profil et vérifiez les valeurs saisies pour afficher une suggestion indicative.",
                     severity: .critical
                 )
             )
@@ -346,9 +346,9 @@ struct ResultView: View {
                 }
 
                 if viewModel.isCorrectionEnabled, let glucose = viewModel.currentGlucose(in: profile.glucoseUnit) {
-                    AuditRow(title: "Glycemie utilisee", value: DoseFormatter.glucose(glucose, unit: profile.glucoseUnit))
+                    AuditRow(title: "Glycémie utilisée", value: DoseFormatter.glucose(glucose, unit: profile.glucoseUnit))
                 } else {
-                    AuditRow(title: "Correction glycemie", value: "Non incluse")
+                    AuditRow(title: "Correction glycémie", value: "Non incluse")
                 }
 
                 AuditRow(title: "Ratio", value: "1 U / \(DoseFormatter.carbs(profile.insulinToCarbRatio))")
@@ -365,7 +365,7 @@ struct ResultView: View {
         Button {
             isShowingLimitations = true
         } label: {
-            Label("Voir les limites de l'app avant decision", systemImage: "exclamationmark.shield")
+            Label("Voir les limites de l'app avant décision", systemImage: "exclamationmark.shield")
                 .font(.footnote.weight(.semibold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(13)
@@ -386,7 +386,7 @@ struct ResultView: View {
                 ForEach(analysis.warnings, id: \.self) { warning in
                     SafetyWarningView(
                         warning: SafetyWarning(
-                            title: "Analyse a verifier",
+                            title: "Analyse à vérifier",
                             message: warning,
                             severity: analysis.confidence < 0.55 ? .critical : .caution
                         )
@@ -419,15 +419,15 @@ struct ResultView: View {
         }
 
         let blockingTitles: Set<String> = [
-            "Glucides a verifier",
-            "Glycemie a verifier",
-            "Insuline active a verifier",
-            "Volume boisson a verifier",
-            "Boisson tres sucree",
-            "Ratio a verifier",
-            "Facteur de correction a verifier",
-            "Cible glycemie a verifier",
-            "Limite de dose a verifier"
+            "Glucides à vérifier",
+            "Glycémie à vérifier",
+            "Insuline active à vérifier",
+            "Volume boisson à vérifier",
+            "Boisson très sucrée",
+            "Ratio à vérifier",
+            "Facteur de correction à vérifier",
+            "Cible glycémie à vérifier",
+            "Limite de dose à vérifier"
         ]
 
         return viewModel.safetyWarnings.first {
@@ -461,11 +461,11 @@ struct ResultView: View {
 
     private var glucoseInputCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Toggle("Inclure une correction glycemie", isOn: $viewModel.isCorrectionEnabled)
+            Toggle("Inclure une correction glycémie", isOn: $viewModel.isCorrectionEnabled)
                 .font(.subheadline.weight(.semibold))
 
             if viewModel.isCorrectionEnabled {
-                Picker("Unite saisie", selection: $viewModel.inputGlucoseUnit) {
+                Picker("Unité saisie", selection: $viewModel.inputGlucoseUnit) {
                     ForEach(GlucoseUnit.allCases) { unit in
                         Text(unit.title).tag(unit)
                     }
@@ -473,7 +473,7 @@ struct ResultView: View {
                 .pickerStyle(.segmented)
 
                 DecimalField(
-                    title: "Glycemie actuelle",
+                    title: "Glycémie actuelle",
                     unit: viewModel.inputGlucoseUnit.title,
                     placeholder: "Optionnel",
                     text: $viewModel.currentGlucoseText
@@ -486,7 +486,7 @@ struct ResultView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Text("Aucune correction ne sera calculee. La suggestion indicative utilisera seulement les glucides.")
+                Text("Aucune correction ne sera calculée. La suggestion indicative utilisera seulement les glucides.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -552,18 +552,18 @@ struct ResultView: View {
                 if viewModel.beverageType.isAlcoholic {
                     SafetyWarningView(
                         warning: SafetyWarning(
-                            title: "Alcool a verifier",
-                            message: "L'alcool peut rendre l'estimation moins fiable. Confirmez avec vos consignes medicales et votre propre jugement.",
+                            title: "Alcool à vérifier",
+                            message: "L'alcool peut rendre l'estimation moins fiable. Confirmez avec vos consignes médicales et votre propre jugement.",
                             severity: .caution
                         )
                     )
                 } else {
-                    Text("Les boissons sucrees, jus et cafes sucres peuvent etre invisibles sur la photo. Ajoutez-les ici si elles font partie du repas.")
+                    Text("Les boissons sucrées, jus et cafés sucrés peuvent être invisibles sur la photo. Ajoutez-les ici si elles font partie du repas.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Text("Aucune boisson n'est incluse dans les glucides. Ajoutez soda, jus, cafe sucre ou alcool si necessaire.")
+                Text("Aucune boisson n'est incluse dans les glucides. Ajoutez soda, jus, café sucré ou alcool si nécessaire.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -595,7 +595,7 @@ struct ResultView: View {
             }
 
             if !canSave {
-                Text("La sauvegarde devient disponible apres verification des glucides et resolution des alertes bloquantes.")
+                Text("La sauvegarde devient disponible après vérification des glucides et résolution des alertes bloquantes.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

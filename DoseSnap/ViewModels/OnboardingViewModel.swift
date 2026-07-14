@@ -16,7 +16,7 @@ enum OnboardingStep: Int, CaseIterable, Identifiable {
         case .disclaimer:
             "DoseSnap est une aide d'estimation"
         case .glucoseUnit:
-            "Unite de glycemie"
+            "Unité de glycémie"
         case .insulinProfile:
             "Profil insulinique"
         case .safetyLimit:
@@ -24,7 +24,7 @@ enum OnboardingStep: Int, CaseIterable, Identifiable {
         case .calibration:
             "Calibration alimentaire"
         case .review:
-            "Verification finale"
+            "Vérification finale"
         }
     }
 

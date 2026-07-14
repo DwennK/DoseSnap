@@ -13,20 +13,20 @@ enum DemoDataSeeder {
                 suggestedDose: 3.5,
                 glucoseValue: nil,
                 activeInsulin: nil,
-                notes: "Exemple local pour verifier l'historique.",
+                notes: "Exemple local pour vérifier l'historique.",
                 usefulness: .useful
             ),
             MealEntry(
                 date: Date().addingTimeInterval(-86_400),
                 thumbnailData: nil,
-                estimatedMealName: "Bol de pates",
+                estimatedMealName: "Bol de pâtes",
                 confirmedCarbs: 92,
                 carbsRangeLow: 70,
                 carbsRangeHigh: 120,
                 suggestedDose: 9,
                 glucoseValue: 115,
                 activeInsulin: nil,
-                notes: "Portion demo a remplacer par une vraie entree.",
+                notes: "Portion démo à remplacer par une vraie entrée.",
                 usefulness: .notRated
             )
         ]

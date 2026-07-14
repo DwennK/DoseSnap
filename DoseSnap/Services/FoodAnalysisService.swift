@@ -9,11 +9,11 @@ enum FoodAnalysisError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .missingImage:
-            "Aucune image n'a ete fournie."
+            "Aucune image n'a été fournie."
         case .backendNotConfigured:
-            "Aucun endpoint backend n'est configure."
+            "Aucun endpoint backend n'est configuré."
         case .invalidResponse:
-            "La reponse d'analyse est invalide."
+            "La réponse d'analyse est invalide."
         case .requestFailed(let message):
             message
         }

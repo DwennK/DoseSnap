@@ -21,7 +21,7 @@ enum SafetyRules {
             warnings.append(
                 SafetyWarning(
                     title: "Profil incomplet",
-                    message: "Completez vos reglages personnels avant d'afficher une suggestion indicative.",
+                    message: "Complétez vos réglages personnels avant d'afficher une suggestion indicative.",
                     severity: .critical
                 )
             )
@@ -52,8 +52,8 @@ enum SafetyRules {
         if carbs > 150 {
             warnings.append(
                 SafetyWarning(
-                    title: "Glucides eleves",
-                    message: "L'estimation depasse 150 g. Pesez le repas ou validez manuellement les portions.",
+                    title: "Glucides élevés",
+                    message: "L'estimation dépasse 150 g. Pesez le repas ou validez manuellement les portions.",
                     severity: .caution
                 )
             )
@@ -73,7 +73,7 @@ enum SafetyRules {
             if !analysis.isLikelyFood {
                 warnings.append(
                     SafetyWarning(
-                        title: "Aliment non confirme",
+                        title: "Aliment non confirmé",
                         message: "La photo ne semble pas montrer clairement un aliment. Entrez les glucides manuellement.",
                         severity: .critical
                     )
@@ -83,8 +83,8 @@ enum SafetyRules {
             if containsBeverageKeyword(analysis), beverageInput == nil {
                 warnings.append(
                     SafetyWarning(
-                        title: "Boisson a verifier",
-                        message: "Une boisson sucree, un jus, un cafe sucre ou un alcool peut etre mal estime sur photo. Ajoutez-la manuellement si elle fait partie du repas.",
+                        title: "Boisson à vérifier",
+                        message: "Une boisson sucrée, un jus, un café sucré ou un alcool peut être mal estimé sur photo. Ajoutez-la manuellement si elle fait partie du repas.",
                         severity: .caution
                     )
                 )
@@ -98,8 +98,8 @@ enum SafetyRules {
             if factor != 1 {
                 warnings.append(
                     SafetyWarning(
-                        title: "Calibration appliquee",
-                        message: "Vos reponses de calibration ajustent legerement l'estimation. Verifiez quand meme les glucides.",
+                        title: "Calibration appliquée",
+                        message: "Vos réponses de calibration ajustent légèrement l'estimation. Vérifiez quand même les glucides.",
                         severity: .info
                     )
                 )
@@ -107,8 +107,8 @@ enum SafetyRules {
         case .needsReview:
             warnings.append(
                 SafetyWarning(
-                    title: "Calibration incoherente",
-                    message: "Vos reponses semblent incoherentes avec votre ratio. Verifiez vos reglages avant de vous fier a cette estimation.",
+                    title: "Calibration incohérente",
+                    message: "Vos réponses semblent incohérentes avec votre ratio. Vérifiez vos réglages avant de vous fier à cette estimation.",
                     severity: .caution
                 )
             )
@@ -118,8 +118,8 @@ enum SafetyRules {
             if glucose <= profile.glucoseUnit.veryLowThreshold {
                 warnings.append(
                     SafetyWarning(
-                        title: "Glycemie tres basse",
-                        message: "La glycemie saisie est basse. Verifiez vos consignes medicales avant toute correction.",
+                        title: "Glycémie très basse",
+                        message: "La glycémie saisie est basse. Vérifiez vos consignes médicales avant toute correction.",
                         severity: .critical
                     )
                 )
@@ -128,8 +128,8 @@ enum SafetyRules {
             if glucose >= profile.glucoseUnit.veryHighThreshold {
                 warnings.append(
                     SafetyWarning(
-                        title: "Glycemie tres haute",
-                        message: "La glycemie saisie est tres haute. Confirmez avec vos reglages medicaux et votre plan de soins.",
+                        title: "Glycémie très haute",
+                        message: "La glycémie saisie est très haute. Confirmez avec vos réglages médicaux et votre plan de soins.",
                         severity: .critical
                     )
                 )
@@ -139,8 +139,8 @@ enum SafetyRules {
         if calculation?.wasLimitedByMaximum == true {
             warnings.append(
                 SafetyWarning(
-                    title: "Limite appliquee",
-                    message: "La suggestion calculee depassait votre dose maximale par suggestion. La limite de securite a ete appliquee.",
+                    title: "Limite appliquée",
+                    message: "La suggestion calculée dépassait votre dose maximale par suggestion. La limite de sécurité a été appliquée.",
                     severity: .critical
                 )
             )
@@ -207,14 +207,14 @@ enum SafetyRules {
         if !profile.isComplete {
             return SafetyWarning(
                 title: "Profil incomplet",
-                message: "Completez vos reglages personnels avant d'afficher une suggestion indicative.",
+                message: "Complétez vos réglages personnels avant d'afficher une suggestion indicative.",
                 severity: .critical
             )
         }
 
         if analysis?.isLikelyFood == false {
             return SafetyWarning(
-                title: "Aliment non confirme",
+                title: "Aliment non confirmé",
                 message: "Entrez les glucides manuellement ou reprenez une photo claire avant d'afficher une suggestion.",
                 severity: .critical
             )
@@ -222,8 +222,8 @@ enum SafetyRules {
 
         if let glucose, glucose <= profile.glucoseUnit.veryLowThreshold {
             return SafetyWarning(
-                title: "Suggestion masquee",
-                message: "Glycemie basse detectee. L'app masque toute suggestion chiffree. Suivez vos consignes medicales avant toute decision.",
+                title: "Suggestion masquée",
+                message: "Glycémie basse détectée. L'app masque toute suggestion chiffrée. Suivez vos consignes médicales avant toute décision.",
                 severity: .critical
             )
         }

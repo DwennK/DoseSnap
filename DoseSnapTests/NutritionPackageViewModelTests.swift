@@ -42,7 +42,7 @@ final class NutritionPackageViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.productName, "")
         XCTAssertNil(viewModel.calculatedCarbs)
         XCTAssertEqual(viewModel.isLookingUpBarcode, false)
-        XCTAssertEqual(viewModel.statusMessage, "Produit introuvable. Scannez l'etiquette ou saisissez les glucides manuellement.")
+        XCTAssertEqual(viewModel.statusMessage, "Produit introuvable. Scannez l'étiquette ou saisissez les glucides manuellement.")
     }
 
     func testScannedBarcodeUsesServingCarbsWhenServingQuantityIsMissing() async {

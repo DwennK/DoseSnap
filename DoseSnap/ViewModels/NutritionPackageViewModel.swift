@@ -83,12 +83,12 @@ final class NutritionPackageViewModel: ObservableObject {
             if let carbs = NutritionLabelParser.extractCarbsPer100g(from: text) {
                 basis = .per100g
                 carbsPer100gText = carbs.formatted(.number.precision(.fractionLength(0...1)))
-                statusMessage = "Glucides detectes sur l'etiquette. Verifiez la valeur avant de continuer."
+                statusMessage = "Glucides détectés sur l'étiquette. Vérifiez la valeur avant de continuer."
             } else {
-                statusMessage = "Etiquette lue, mais glucides non detectes. Saisissez la valeur manuellement."
+                statusMessage = "Étiquette lue, mais glucides non détectés. Saisissez la valeur manuellement."
             }
         } catch {
-            statusMessage = "Lecture etiquette impossible. Saisissez les glucides manuellement."
+            statusMessage = "Lecture étiquette impossible. Saisissez les glucides manuellement."
         }
 
         isReadingLabel = false
@@ -120,11 +120,11 @@ final class NutritionPackageViewModel: ObservableObject {
             let product = try await productLookupService.product(for: normalizedBarcode)
             apply(product)
         } catch ProductNutritionLookupError.productNotFound {
-            statusMessage = "Produit introuvable. Scannez l'etiquette ou saisissez les glucides manuellement."
+            statusMessage = "Produit introuvable. Scannez l'étiquette ou saisissez les glucides manuellement."
         } catch ProductNutritionLookupError.nutritionUnavailable {
-            statusMessage = "Produit trouve, mais glucides indisponibles. Scannez l'etiquette ou saisissez les valeurs."
+            statusMessage = "Produit trouvé, mais glucides indisponibles. Scannez l'étiquette ou saisissez les valeurs."
         } catch {
-            statusMessage = "Recherche produit impossible. Scannez l'etiquette ou saisissez les glucides manuellement."
+            statusMessage = "Recherche produit impossible. Scannez l'étiquette ou saisissez les glucides manuellement."
         }
 
         isLookingUpBarcode = false
@@ -139,7 +139,7 @@ final class NutritionPackageViewModel: ObservableObject {
             basis = .per100g
             carbsPer100gText = Self.formatNumber(carbsPer100g)
             portionGramsText = Self.formatNumber(servingQuantityGrams)
-            statusMessage = "Produit trouve. Glucides et portion pre-remplis depuis Open Food Facts; verifiez avant de continuer."
+            statusMessage = "Produit trouvé. Glucides et portion pré-remplis depuis Open Food Facts ; vérifiez avant de continuer."
             return
         }
 
@@ -147,14 +147,14 @@ final class NutritionPackageViewModel: ObservableObject {
             basis = .perServing
             carbsPerServingText = Self.formatNumber(carbsPerServing)
             servingCountText = "1"
-            statusMessage = "Produit trouve. Glucides par portion pre-remplis depuis Open Food Facts; verifiez avant de continuer."
+            statusMessage = "Produit trouvé. Glucides par portion pré-remplis depuis Open Food Facts ; vérifiez avant de continuer."
             return
         }
 
         if let carbsPer100g = product.carbsPer100g {
             basis = .per100g
             carbsPer100gText = Self.formatNumber(carbsPer100g)
-            statusMessage = "Produit trouve. Glucides / 100 g pre-remplis; saisissez la portion consommee."
+            statusMessage = "Produit trouvé. Glucides / 100 g pré-remplis ; saisissez la portion consommée."
         }
     }
 

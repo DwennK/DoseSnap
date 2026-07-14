@@ -49,7 +49,7 @@ final class ScanViewModelTests: XCTestCase {
         viewModel.recalculate(profile: profile)
 
         XCTAssertNil(viewModel.calculation)
-        XCTAssertTrue(viewModel.safetyWarnings.contains { $0.title == "Glycemie tres basse" })
+        XCTAssertTrue(viewModel.safetyWarnings.contains { $0.title == "Glycémie très basse" })
     }
 
     @MainActor
@@ -97,7 +97,7 @@ final class ScanViewModelTests: XCTestCase {
         viewModel.recalculate(profile: profile)
 
         XCTAssertNil(viewModel.calculation)
-        XCTAssertTrue(viewModel.safetyWarnings.contains { $0.title == "Glycemie a verifier" })
+        XCTAssertTrue(viewModel.safetyWarnings.contains { $0.title == "Glycémie à vérifier" })
     }
 
     private func makeImage(size: CGSize, color: UIColor) -> UIImage {

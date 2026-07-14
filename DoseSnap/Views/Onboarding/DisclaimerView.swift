@@ -5,20 +5,20 @@ struct DisclaimerView: View {
         VStack(alignment: .leading, spacing: 14) {
             SafetyPoint(
                 systemImage: "waveform.path.ecg",
-                title: "Pas un avis medical",
-                message: "DoseSnap fournit une estimation de glucides et une suggestion indicative. Ce n'est pas une app medicale certifiee."
+                title: "Pas un avis médical",
+                message: "DoseSnap fournit une estimation de glucides et une suggestion indicative. Ce n'est pas une app médicale certifiée."
             )
 
             SafetyPoint(
                 systemImage: "checkmark.shield",
-                title: "Verification obligatoire",
-                message: "Verifiez toujours avec votre propre jugement, votre materiel, et vos consignes medicales."
+                title: "Vérification obligatoire",
+                message: "Vérifiez toujours avec votre propre jugement, votre matériel et vos consignes médicales."
             )
 
             SafetyPoint(
                 systemImage: "person.crop.circle.badge.exclamationmark",
-                title: "Vous gardez la decision",
-                message: "L'app ne doit jamais remplacer vos reglages prescrits ni votre plan de soins."
+                title: "Vous gardez la décision",
+                message: "L'app ne doit jamais remplacer vos réglages prescrits ni votre plan de soins."
             )
         }
     }

@@ -132,7 +132,7 @@ final class ScanViewModel: ObservableObject {
         }
 
         if requiresPhotoQualityConfirmation {
-            errorMessage = "Qualite photo a verifier. Reprenez la photo ou appuyez a nouveau pour analyser quand meme."
+            errorMessage = "Qualité photo à vérifier. Reprenez la photo ou appuyez à nouveau pour analyser quand même."
             requiresPhotoQualityConfirmation = false
             return
         }
@@ -162,8 +162,8 @@ final class ScanViewModel: ObservableObject {
             totalCarbsMid: carbs,
             totalCarbsHigh: carbs,
             confidence: 1,
-            warnings: ["Glucides saisis manuellement. Verifiez avec vos reperes habituels."],
-            explanation: "Aucune photo n'a ete analysee pour cette entree.",
+            warnings: ["Glucides saisis manuellement. Vérifiez avec vos repères habituels."],
+            explanation: "Aucune photo n'a été analysée pour cette entrée.",
             isLikelyFood: true
         )
         confirmedCarbsText = carbs.formatted(.number.precision(.fractionLength(0)))
@@ -179,7 +179,7 @@ final class ScanViewModel: ObservableObject {
             totalCarbsMid: carbs,
             totalCarbsHigh: carbs,
             confidence: 1,
-            warnings: ["Valeurs issues de l'emballage. Verifiez la portion et les glucides avant de sauvegarder."],
+            warnings: ["Valeurs issues de l'emballage. Vérifiez la portion et les glucides avant de sauvegarder."],
             explanation: "\(details)\(barcodeSuffix)",
             isLikelyFood: true
         )

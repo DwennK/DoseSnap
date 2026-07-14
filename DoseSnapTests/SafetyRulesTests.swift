@@ -11,7 +11,7 @@ final class SafetyRulesTests: XCTestCase {
             calculation: nil
         )
 
-        XCTAssertTrue(warnings.contains { $0.title == "Glucides eleves" })
+        XCTAssertTrue(warnings.contains { $0.title == "Glucides élevés" })
     }
 
     func testWarnsForLowGlucose() {
@@ -23,7 +23,7 @@ final class SafetyRulesTests: XCTestCase {
             calculation: nil
         )
 
-        XCTAssertTrue(warnings.contains { $0.title == "Glycemie tres basse" })
+        XCTAssertTrue(warnings.contains { $0.title == "Glycémie très basse" })
     }
 
     func testWarnsForIncoherentCalibration() {
@@ -43,7 +43,7 @@ final class SafetyRulesTests: XCTestCase {
             calculation: nil
         )
 
-        XCTAssertTrue(warnings.contains { $0.title == "Calibration incoherente" })
+        XCTAssertTrue(warnings.contains { $0.title == "Calibration incohérente" })
     }
 
     func testBlocksSaveUntilCarbsVerified() {
@@ -81,7 +81,7 @@ final class SafetyRulesTests: XCTestCase {
                 analysis: nil,
                 glucose: profile.glucoseUnit.veryLowThreshold
             )?.title,
-            "Suggestion masquee"
+            "Suggestion masquée"
         )
     }
 
@@ -105,7 +105,7 @@ final class SafetyRulesTests: XCTestCase {
             calculation: nil
         )
 
-        XCTAssertTrue(warnings.contains { $0.title == "Glucides a verifier" })
+        XCTAssertTrue(warnings.contains { $0.title == "Glucides à vérifier" })
     }
 
     func testWarnsWhenBeverageIsDetectedButNotConfirmed() {
@@ -126,7 +126,7 @@ final class SafetyRulesTests: XCTestCase {
             calculation: nil
         )
 
-        XCTAssertTrue(warnings.contains { $0.title == "Boisson a verifier" })
+        XCTAssertTrue(warnings.contains { $0.title == "Boisson à vérifier" })
     }
 
     func testWarnsForAbsurdProfileValues() {
@@ -141,7 +141,7 @@ final class SafetyRulesTests: XCTestCase {
             calculation: nil
         )
 
-        XCTAssertTrue(warnings.contains { $0.title == "Ratio a verifier" })
+        XCTAssertTrue(warnings.contains { $0.title == "Ratio à vérifier" })
     }
 
     private func completeProfile() -> UserProfile {

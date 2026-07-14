@@ -67,7 +67,7 @@ struct FoodAnalysis: Identifiable, Codable, Equatable {
         }
 
         var adjustedWarnings = warnings
-        adjustedWarnings.append("Calibration alimentaire appliquee avec prudence. Verifiez les glucides avant toute decision.")
+        adjustedWarnings.append("Calibration alimentaire appliquée avec prudence. Vérifiez les glucides avant toute décision.")
 
         return FoodAnalysis(
             id: id,
