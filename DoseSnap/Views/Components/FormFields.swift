@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct DecimalField: View {
     var title: String
@@ -94,6 +95,26 @@ struct MetricRow: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.78)
                 .multilineTextAlignment(.trailing)
+        }
+    }
+}
+
+extension View {
+    func keyboardDoneButton() -> some View {
+        toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+
+                Button("OK") {
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder),
+                        to: nil,
+                        from: nil,
+                        for: nil
+                    )
+                }
+                .fontWeight(.semibold)
+            }
         }
     }
 }

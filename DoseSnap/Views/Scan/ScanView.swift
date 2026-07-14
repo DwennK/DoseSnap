@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct ScanView: View {
     @EnvironmentObject private var appState: AppState
@@ -10,55 +11,69 @@ struct ScanView: View {
     @State private var duplicateMeal: MealEntry?
     @State private var pendingMeal: MealEntry?
 
+    private static let resultAnchorID = "scan-result"
+
     var body: some View {
         GeometryReader { geometry in
             let contentWidth = max(0, geometry.size.width - 40)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ScreenHeader(
-                        eyebrow: "Scan repas",
-                        title: "Photographiez votre repas.",
-                        subtitle: "Cadrez l'assiette, lancez l'analyse, puis confirmez les glucides avant toute sauvegarde.",
-                        systemImage: "camera.viewfinder"
-                    )
-
-                    imageCard(width: contentWidth)
-                    analyzeArea
-
-                    if viewModel.analysis != nil || viewModel.calculation != nil {
-                        ResultView(
-                            viewModel: viewModel,
-                            profile: appState.profile,
-                            onSave: saveMeal,
-                            onCancel: { dismiss() }
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        ScreenHeader(
+                            eyebrow: "Scan repas",
+                            title: "Photographiez votre repas.",
+                            subtitle: "Cadrez l'assiette, lancez l'analyse, puis confirmez les glucides avant toute sauvegarde.",
+                            systemImage: "camera.viewfinder"
                         )
-                    }
-                }
-                .frame(width: contentWidth, alignment: .leading)
-                .padding(20)
-                .padding(.bottom, 150)
-            }
-            .background(AppBackground())
-            .navigationTitle("Scan")
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $isCameraPresented) {
-                CameraPicker { image in
-                    viewModel.setCameraImage(image)
-                }
-                .ignoresSafeArea()
-            }
-            .onChange(of: photoItem) { _, newItem in
-                guard let newItem else { return }
 
-                Task {
-                    if let data = try? await newItem.loadTransferable(type: Data.self) {
-                        viewModel.setImageData(data)
+                        imageCard(width: contentWidth)
+                        analyzeArea
+
+                        if viewModel.analysis != nil || viewModel.calculation != nil {
+                            ResultView(
+                                viewModel: viewModel,
+                                profile: appState.profile,
+                                onSave: saveMeal,
+                                onCancel: { dismiss() }
+                            )
+                            .id(Self.resultAnchorID)
+                        }
+                    }
+                    .frame(width: contentWidth, alignment: .leading)
+                    .padding(20)
+                    .padding(.bottom, 24)
+                }
+                .background(AppBackground())
+                .navigationTitle("Scan")
+                .navigationBarTitleDisplayMode(.inline)
+                .keyboardDoneButton()
+                .sheet(isPresented: $isCameraPresented) {
+                    CameraPicker { image in
+                        viewModel.setCameraImage(image)
+                    }
+                    .ignoresSafeArea()
+                }
+                .onChange(of: photoItem) { _, newItem in
+                    guard let newItem else { return }
+
+                    Task {
+                        if let data = try? await newItem.loadTransferable(type: Data.self) {
+                            viewModel.setImageData(data)
+                        }
                     }
                 }
-            }
-            .duplicateMealAlert(duplicateMeal: $duplicateMeal) {
-                commitPendingMeal()
+                .onChange(of: viewModel.analysis != nil || viewModel.calculation != nil) { _, hasResult in
+                    scrollToResultIfNeeded(hasResult: hasResult, proxy: proxy)
+                }
+                .onChange(of: viewModel.isAnalyzing) { wasAnalyzing, isAnalyzing in
+                    if wasAnalyzing && !isAnalyzing {
+                        scrollToResultIfNeeded(hasResult: viewModel.analysis != nil || viewModel.calculation != nil, proxy: proxy)
+                    }
+                }
+                .duplicateMealAlert(duplicateMeal: $duplicateMeal) {
+                    commitPendingMeal()
+                }
             }
         }
     }
@@ -106,10 +121,10 @@ struct ScanView: View {
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                StatusCapsule(title: "Photo prete", systemImage: "checkmark.circle.fill", color: AppTheme.positive)
+                StatusCapsule(title: "Photo prête", systemImage: "checkmark.circle.fill", color: AppTheme.positive)
                     .background(AppTheme.warmSurface, in: Capsule())
 
-                Text("Verifiez que toute l'assiette est visible.")
+                Text("Vérifiez que toute l'assiette est visible.")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.white)
                     .lineLimit(2)
@@ -151,7 +166,7 @@ struct ScanView: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.82)
 
-                    Text("Assiette entiere, lumiere stable, boissons incluses si elles comptent.")
+                    Text("Assiette entière, lumière stable, boissons incluses si elles comptent.")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white)
                         .lineLimit(3)
@@ -169,7 +184,7 @@ struct ScanView: View {
         Button {
             isCameraPresented = true
         } label: {
-            Self.photoActionLabel(title: "Camera", systemImage: "camera.fill", color: AppTheme.accent)
+            Self.photoActionLabel(title: "Caméra", systemImage: "camera.fill", color: AppTheme.accent)
         }
         .buttonStyle(PressableButtonStyle())
     }
@@ -239,7 +254,7 @@ struct ScanView: View {
                 }
 
                 if viewModel.requiresPhotoQualityConfirmation {
-                    SecondaryActionButton(title: "J'ai verifie la photo", systemImage: "checkmark.seal", role: nil) {
+                    SecondaryActionButton(title: "J'ai vérifié la photo", systemImage: "checkmark.seal", role: nil) {
                         viewModel.confirmPhotoQualityForAnalysis()
                     }
                 }
@@ -267,7 +282,18 @@ struct ScanView: View {
 
     private func commitMeal(_ meal: MealEntry) {
         appState.addMeal(meal)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         pendingMeal = nil
         dismiss()
+    }
+
+    private func scrollToResultIfNeeded(hasResult: Bool, proxy: ScrollViewProxy) {
+        guard hasResult else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
+                proxy.scrollTo(Self.resultAnchorID, anchor: .top)
+            }
+        }
     }
 }

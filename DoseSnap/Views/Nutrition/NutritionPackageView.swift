@@ -1,5 +1,6 @@
 import PhotosUI
 import SwiftUI
+import UIKit
 
 struct NutritionPackageView: View {
     @EnvironmentObject private var appState: AppState
@@ -13,72 +14,81 @@ struct NutritionPackageView: View {
     @State private var duplicateMeal: MealEntry?
     @State private var pendingMeal: MealEntry?
 
+    private static let resultAnchorID = "nutrition-result"
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                ScreenHeader(
-                    eyebrow: "Emballage",
-                    title: "Lisez l'etiquette produit.",
-                    subtitle: "Code-barres, OCR ou saisie directe: le calcul reste base sur vos valeurs.",
-                    systemImage: "barcode.viewfinder"
-                )
-
-                labelSection
-                barcodeSection
-                nutritionFields
-                calculatedPreview
-
-                if hasCreatedResult {
-                    ResultView(
-                        viewModel: resultViewModel,
-                        profile: appState.profile,
-                        onSave: saveMeal,
-                        onCancel: { dismiss() }
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    ScreenHeader(
+                        eyebrow: "Emballage",
+                        title: "Lisez l'étiquette produit.",
+                        subtitle: "Code-barres, OCR ou saisie directe : le calcul reste basé sur vos valeurs.",
+                        systemImage: "barcode.viewfinder"
                     )
-                }
-            }
-            .padding(20)
-            .padding(.bottom, 150)
-        }
-        .background(AppBackground())
-        .navigationTitle("Emballage")
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $isBarcodeScannerPresented) {
-            BarcodeScannerView { code in
-                isBarcodeScannerPresented = false
-                Task {
-                    await viewModel.setBarcode(code)
-                }
-            } onCancel: {
-                isBarcodeScannerPresented = false
-            }
-            .ignoresSafeArea()
-        }
-        .sheet(isPresented: $isLabelCameraPresented) {
-            CameraPicker { image in
-                Task {
-                    await viewModel.setLabelImage(image)
-                }
-            }
-            .ignoresSafeArea()
-        }
-        .onChange(of: photoItem) { _, newItem in
-            guard let newItem else { return }
 
-            Task {
-                let data = try? await newItem.loadTransferable(type: Data.self)
-                await viewModel.setLabelImageData(data)
+                    labelSection
+                    barcodeSection
+                    nutritionFields
+                    calculatedPreview
+
+                    if hasCreatedResult {
+                        ResultView(
+                            viewModel: resultViewModel,
+                            profile: appState.profile,
+                            onSave: saveMeal,
+                            onCancel: { dismiss() }
+                        )
+                        .id(Self.resultAnchorID)
+                    }
+                }
+                .padding(20)
+                .padding(.bottom, 24)
             }
-        }
-        .duplicateMealAlert(duplicateMeal: $duplicateMeal) {
-            commitPendingMeal()
+            .background(AppBackground())
+            .navigationTitle("Emballage")
+            .navigationBarTitleDisplayMode(.inline)
+            .keyboardDoneButton()
+            .sheet(isPresented: $isBarcodeScannerPresented) {
+                BarcodeScannerView { code in
+                    isBarcodeScannerPresented = false
+                    Task {
+                        await viewModel.setBarcode(code)
+                    }
+                } onCancel: {
+                    isBarcodeScannerPresented = false
+                }
+                .ignoresSafeArea()
+            }
+            .sheet(isPresented: $isLabelCameraPresented) {
+                CameraPicker { image in
+                    Task {
+                        await viewModel.setLabelImage(image)
+                    }
+                }
+                .ignoresSafeArea()
+            }
+            .onChange(of: photoItem) { _, newItem in
+                guard let newItem else { return }
+
+                Task {
+                    let data = try? await newItem.loadTransferable(type: Data.self)
+                    await viewModel.setLabelImageData(data)
+                }
+            }
+            .onChange(of: hasCreatedResult) { _, hasResult in
+                scrollToResultIfNeeded(hasResult: hasResult, proxy: proxy)
+            }
+            .duplicateMealAlert(duplicateMeal: $duplicateMeal) {
+                commitPendingMeal()
+            }
         }
     }
 
     private var barcodeSection: some View {
         CardView {
             VStack(alignment: .leading, spacing: 14) {
-                SectionHeader(title: "Code-barres", subtitle: "Scannez un produit pour pre-remplir le nom, les glucides et parfois la portion.")
+                SectionHeader(title: "Code-barres", subtitle: "Scannez un produit pour pré-remplir le nom, les glucides et parfois la portion.")
 
                 HStack(spacing: 10) {
                     TextField("Code-barres", text: $viewModel.barcode)
@@ -112,6 +122,7 @@ struct NutritionPackageView: View {
                     }
                     .buttonStyle(PressableButtonStyle())
                     .disabled(viewModel.isLookingUpBarcode)
+                    .accessibilityLabel("Scanner un code-barres")
                 }
 
                 TextField("Nom du produit ou repas", text: $viewModel.productName)
@@ -131,7 +142,7 @@ struct NutritionPackageView: View {
 
         return CardView(padding: 14, cornerRadius: 26) {
             VStack(alignment: .leading, spacing: 14) {
-                SectionHeader(title: "Etiquette nutritionnelle", subtitle: "Photographiez la zone glucides ou importez une image nette.")
+                SectionHeader(title: "Étiquette nutritionnelle", subtitle: "Photographiez la zone glucides ou importez une image nette.")
 
                 if let image = viewModel.labelImage {
                     Image(uiImage: image)
@@ -160,7 +171,7 @@ struct NutritionPackageView: View {
                             endPoint: .bottom
                         )
 
-                        Label("Produit ou etiquette", systemImage: "text.viewfinder")
+                        Label("Produit ou étiquette", systemImage: "text.viewfinder")
                             .font(.footnote.weight(.bold))
                             .foregroundStyle(.white)
                             .lineLimit(1)
@@ -200,7 +211,7 @@ struct NutritionPackageView: View {
         Button {
             isLabelCameraPresented = true
         } label: {
-            Self.labelAction(title: "Camera", systemImage: "camera.fill", color: AppTheme.accent)
+            Self.labelAction(title: "Caméra", systemImage: "camera.fill", color: AppTheme.accent)
         }
         .buttonStyle(PressableButtonStyle())
         .disabled(viewModel.isReadingLabel)
@@ -233,7 +244,7 @@ struct NutritionPackageView: View {
     private var nutritionFields: some View {
         CardView {
             VStack(alignment: .leading, spacing: 16) {
-                SectionHeader(title: "Glucides et portion", subtitle: "Le calcul utilise uniquement les valeurs que vous verifiez.")
+                SectionHeader(title: "Glucides et portion", subtitle: "Le calcul utilise uniquement les valeurs que vous vérifiez.")
 
                 Picker("Mode", selection: $viewModel.basis) {
                     ForEach(NutritionCarbBasis.allCases) { basis in
@@ -251,7 +262,7 @@ struct NutritionPackageView: View {
                     )
 
                     DecimalField(
-                        title: "Portion consommee",
+                        title: "Portion consommée",
                         unit: "g",
                         placeholder: "Ex. 50",
                         text: $viewModel.portionGramsText
@@ -280,7 +291,7 @@ struct NutritionPackageView: View {
             if let carbs = viewModel.calculatedCarbs {
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Glucides calcules")
+                        Text("Glucides calculés")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.secondary)
                         Text(DoseFormatter.carbs(carbs))
@@ -291,15 +302,15 @@ struct NutritionPackageView: View {
                     Spacer()
                 }
 
-                PrimaryActionButton(title: "Verifier la suggestion", systemImage: "checkmark.seal") {
+                PrimaryActionButton(title: "Vérifier la suggestion", systemImage: "checkmark.seal") {
                     viewModel.apply(to: resultViewModel, profile: appState.profile)
                     hasCreatedResult = true
                 }
             } else {
                 SafetyWarningView(
                     warning: SafetyWarning(
-                        title: "Portion a completer",
-                        message: "Saisissez les glucides de l'emballage et la portion consommee pour calculer les glucides.",
+                        title: "Portion à compléter",
+                        message: "Saisissez les glucides de l'emballage et la portion consommée pour calculer les glucides.",
                         severity: .caution
                     )
                 )
@@ -333,7 +344,18 @@ struct NutritionPackageView: View {
 
     private func commitMeal(_ meal: MealEntry) {
         appState.addMeal(meal)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         pendingMeal = nil
         dismiss()
+    }
+
+    private func scrollToResultIfNeeded(hasResult: Bool, proxy: ScrollViewProxy) {
+        guard hasResult else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
+                proxy.scrollTo(Self.resultAnchorID, anchor: .top)
+            }
+        }
     }
 }

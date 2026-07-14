@@ -14,7 +14,7 @@ struct HomeView: View {
                 recentHistory
             }
             .padding(20)
-            .padding(.bottom, 150)
+            .padding(.bottom, 24)
         }
         .background(AppBackground())
         .navigationTitle("DoseSnap")
@@ -94,53 +94,60 @@ struct HomeView: View {
         NavigationLink {
             NutritionPackageView()
         } label: {
-            QuickActionTile(
-                title: "Emballage",
-                subtitle: "Etiquette produit",
-                systemImage: "barcode.viewfinder",
-                color: AppTheme.accent
-            )
+                QuickActionTile(
+                    title: "Emballage",
+                    subtitle: "Étiquette produit",
+                    systemImage: "barcode.viewfinder",
+                    color: AppTheme.accent
+                )
         }
     }
 
     @ViewBuilder
     private var latestEstimate: some View {
-        SectionHeader(title: "Derniere estimation", subtitle: nil)
+        SectionHeader(title: "Dernière estimation", subtitle: nil)
 
         if let meal = viewModel.latestMeal {
-            CardView {
-                HStack(spacing: 16) {
-                    MealThumbnailView(data: meal.thumbnailData, size: 72)
+            NavigationLink {
+                HistoryView()
+            } label: {
+                CardView {
+                    HStack(spacing: 16) {
+                        MealThumbnailView(data: meal.thumbnailData, size: 72)
 
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(meal.estimatedMealName)
-                            .font(.headline)
-                            .lineLimit(2)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(meal.estimatedMealName)
+                                .font(.headline)
+                                .foregroundStyle(AppTheme.ink)
+                                .lineLimit(2)
 
-                        Text("\(DoseFormatter.carbs(meal.confirmedCarbs)) · \(DoseFormatter.dose(meal.suggestedDose)) indicatif")
-                            .font(.subheadline.weight(.medium))
+                            Text("\(DoseFormatter.carbs(meal.confirmedCarbs)) · \(DoseFormatter.dose(meal.suggestedDose)) indicatif")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(AppTheme.ink)
 
-                        Text(meal.date, style: .relative)
-                            .font(.footnote)
+                            Text(meal.date, style: .relative)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(.secondary)
                     }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(.secondary)
                 }
             }
+            .buttonStyle(PressableButtonStyle())
         } else {
             CardView {
                 HStack(spacing: 12) {
                     IconBadge(systemImage: "tray", color: AppTheme.secondaryAccent)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Pret pour le premier scan")
+                        Text("Prêt pour le premier scan")
                             .font(.headline.weight(.bold))
                             .foregroundStyle(AppTheme.navy)
-                        Text("Votre derniere estimation apparaitra ici.")
+                        Text("Votre dernière estimation apparaîtra ici.")
                             .font(.subheadline)
                             .foregroundStyle(AppTheme.mutedInk)
                     }
@@ -151,7 +158,7 @@ struct HomeView: View {
 
     private var profileCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(title: "Profil du jour", subtitle: "Modifiable dans Reglages")
+            SectionHeader(title: "Profil du jour", subtitle: "Modifiable dans Réglages")
 
             CardView {
                 VStack(spacing: 12) {
@@ -166,17 +173,28 @@ struct HomeView: View {
 
     private var recentHistory: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(title: "Historique recent", subtitle: nil)
+            HStack(alignment: .firstTextBaseline) {
+                SectionHeader(title: "Historique récent", subtitle: nil)
+
+                NavigationLink {
+                    HistoryView()
+                } label: {
+                    Label("Tout", systemImage: "arrow.right")
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(AppTheme.accent)
+                        .labelStyle(.titleAndIcon)
+                }
+            }
 
             if viewModel.recentMeals.isEmpty {
                 CardView {
                     HStack(spacing: 12) {
                         IconBadge(systemImage: "clock.arrow.circlepath", color: AppTheme.lavender)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Aucun repas recent")
+                            Text("Aucun repas récent")
                                 .font(.headline.weight(.bold))
                                 .foregroundStyle(AppTheme.navy)
-                            Text("Les repas sauvegardes apparaitront ici.")
+                            Text("Les repas sauvegardés apparaîtront ici.")
                                 .font(.subheadline)
                                 .foregroundStyle(AppTheme.mutedInk)
                         }
@@ -185,20 +203,29 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 10) {
                     ForEach(viewModel.recentMeals) { meal in
-                        CardView {
-                            HStack(spacing: 12) {
-                                MealThumbnailView(data: meal.thumbnailData, size: 46)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(meal.estimatedMealName)
-                                        .font(.subheadline.weight(.semibold))
-                                        .lineLimit(1)
-                                    Text("\(DoseFormatter.carbs(meal.confirmedCarbs)) · \(DoseFormatter.dose(meal.suggestedDose))")
-                                        .font(.footnote)
+                        NavigationLink {
+                            HistoryView()
+                        } label: {
+                            CardView {
+                                HStack(spacing: 12) {
+                                    MealThumbnailView(data: meal.thumbnailData, size: 46)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(meal.estimatedMealName)
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(AppTheme.ink)
+                                            .lineLimit(1)
+                                        Text("\(DoseFormatter.carbs(meal.confirmedCarbs)) · \(DoseFormatter.dose(meal.suggestedDose))")
+                                            .font(.footnote)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.weight(.bold))
                                         .foregroundStyle(.secondary)
                                 }
-                                Spacer()
                             }
                         }
+                        .buttonStyle(PressableButtonStyle())
                     }
                 }
             }

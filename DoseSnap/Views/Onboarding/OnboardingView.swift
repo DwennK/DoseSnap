@@ -24,7 +24,7 @@ struct OnboardingView: View {
                             stepContent
                         }
 
-                        Text("Toutes les valeurs peuvent etre modifiees plus tard dans Reglages.")
+                        Text("Toutes les valeurs peuvent être modifiées plus tard dans Réglages.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
@@ -42,6 +42,7 @@ struct OnboardingView: View {
                     }
             }
             .background(AppBackground())
+            .keyboardDoneButton()
         }
     }
 
@@ -87,10 +88,10 @@ struct OnboardingView: View {
 
     private var unitStep: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Choisissez l'unite utilisee par votre lecteur ou capteur.")
+            Text("Choisissez l'unité utilisée par votre lecteur ou capteur.")
                 .foregroundStyle(.secondary)
 
-            Picker("Unite", selection: Binding(
+            Picker("Unité", selection: Binding(
                 get: { viewModel.profile.glucoseUnit },
                 set: { viewModel.setGlucoseUnit($0) }
             )) {
@@ -117,7 +118,7 @@ struct OnboardingView: View {
             )
 
             NumericProfileField(
-                title: "Glycemie cible",
+                title: "Glycémie cible",
                 unit: viewModel.profile.glucoseUnit.title,
                 value: $viewModel.profile.targetGlucose
             )
@@ -147,7 +148,7 @@ struct OnboardingView: View {
                 .pickerStyle(.segmented)
             }
 
-            Text("Cette limite ne rend pas une suggestion certaine. Elle sert a eviter une valeur affichee trop haute.")
+            Text("Cette limite ne rend pas une suggestion certaine. Elle sert à éviter une valeur affichée trop haute.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
 
@@ -157,14 +158,14 @@ struct OnboardingView: View {
 
     private var calibrationStep: some View {
         VStack(spacing: 16) {
-            Text("Ces questions ne remplacent pas vos reglages medicaux. Elles servent seulement a detecter une incoherence et a ajuster legerement les estimations.")
+            Text("Ces questions ne remplacent pas vos réglages médicaux. Elles servent seulement à détecter une incohérence et à ajuster légèrement les estimations.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             NumericProfileField(title: "Snickers standard", unit: "U", value: $viewModel.profile.calibration.snickersUnits)
             NumericProfileField(title: "Menu Big Mac", unit: "U", value: $viewModel.profile.calibration.bigMacMenuUnits)
             NumericProfileField(title: "Pizza moyenne", unit: "U", value: $viewModel.profile.calibration.mediumPizzaUnits)
-            NumericProfileField(title: "Bol de pates", unit: "U", value: $viewModel.profile.calibration.pastaBowlUnits)
+            NumericProfileField(title: "Bol de pâtes", unit: "U", value: $viewModel.profile.calibration.pastaBowlUnits)
         }
     }
 
@@ -178,7 +179,7 @@ struct OnboardingView: View {
             SafetyWarningView(
                 warning: SafetyWarning(
                     title: "Rappel important",
-                    message: "DoseSnap affiche une suggestion indicative a verifier, jamais une consigne certaine.",
+                    message: "DoseSnap affiche une suggestion indicative à vérifier, jamais une consigne certaine.",
                     severity: .caution
                 )
             )
@@ -201,12 +202,22 @@ struct OnboardingView: View {
     private var footer: some View {
         HStack(spacing: 12) {
             if viewModel.canGoBack {
-                Button("Retour") {
+                Button {
                     viewModel.goBack()
+                } label: {
+                    Label("Retour", systemImage: "chevron.left")
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.accent)
+                        .lineLimit(1)
+                        .frame(minHeight: 52)
+                        .padding(.horizontal, 16)
+                        .background(AppTheme.warmSurface, in: RoundedRectangle(cornerRadius: 19, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 19, style: .continuous)
+                                .stroke(AppTheme.accent.opacity(0.22), lineWidth: 1.2)
+                        )
                 }
-                .buttonStyle(.bordered)
-                .tint(AppTheme.accent)
-                .controlSize(.large)
+                .buttonStyle(PressableButtonStyle())
             }
 
             PrimaryActionButton(

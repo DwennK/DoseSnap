@@ -1,21 +1,25 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject private var viewModel = SettingsViewModel(profile: .default)
     @State private var isDisclaimerPresented = false
     @State private var isClearHistoryPresented = false
+    @State private var saveStatusMessage: String?
+    @State private var saveFeedbackTrigger = 0
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 ScreenHeader(
-                    eyebrow: "Reglages",
-                    title: "Gardez les valeurs critiques sous controle.",
-                    subtitle: "Profil, calibration, securite et donnees locales sont modifiables ici.",
+                    eyebrow: "Réglages",
+                    title: "Gardez les valeurs critiques sous contrôle.",
+                    subtitle: "Profil, calibration, sécurité et données locales sont modifiables ici.",
                     systemImage: "slider.horizontal.3"
                 )
 
+                saveStatusView
                 profileSection
                 analysisProviderSection
                 calibrationSection
@@ -23,15 +27,17 @@ struct SettingsView: View {
                 dataSection
             }
             .padding(20)
-            .padding(.bottom, 150)
+            .padding(.bottom, 24)
         }
         .background(AppBackground())
-        .navigationTitle("Reglages")
+        .navigationTitle("Réglages")
         .navigationBarTitleDisplayMode(.inline)
+        .keyboardDoneButton()
+        .sensoryFeedback(.success, trigger: saveFeedbackTrigger)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Enregistrer") {
-                    appState.saveProfile(viewModel.profile)
+                Button(hasUnsavedChanges ? "Enregistrer" : "Enregistré") {
+                    saveProfile(showConfirmation: true)
                 }
                 .fontWeight(.semibold)
                 .disabled(hasBlockingProfileWarnings)
@@ -39,6 +45,12 @@ struct SettingsView: View {
         }
         .onAppear {
             viewModel.profile = appState.profile
+            saveStatusMessage = nil
+        }
+        .onDisappear {
+            if hasUnsavedChanges && !hasBlockingProfileWarnings {
+                saveProfile(showConfirmation: false)
+            }
         }
         .sheet(isPresented: $isDisclaimerPresented) {
             NavigationStack {
@@ -75,11 +87,11 @@ struct SettingsView: View {
         CardView {
             VStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Unite glycemie")
+                    Text("Unité glycémie")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
-                    Picker("Unite", selection: Binding(
+                    Picker("Unité", selection: Binding(
                         get: { viewModel.profile.glucoseUnit },
                         set: { viewModel.setGlucoseUnit($0) }
                     )) {
@@ -92,7 +104,7 @@ struct SettingsView: View {
 
                 NumericProfileField(title: "Ratio insuline/glucides", unit: "g pour 1 U", value: $viewModel.profile.insulinToCarbRatio)
                 NumericProfileField(title: "Facteur de correction", unit: viewModel.profile.glucoseUnit.title + " par 1 U", value: $viewModel.profile.correctionFactor)
-                NumericProfileField(title: "Glycemie cible", unit: viewModel.profile.glucoseUnit.title, value: $viewModel.profile.targetGlucose)
+                NumericProfileField(title: "Glycémie cible", unit: viewModel.profile.glucoseUnit.title, value: $viewModel.profile.targetGlucose)
 
                 profileValidationWarnings
             }
@@ -104,13 +116,13 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 16) {
                 SectionHeader(
                     title: "Calibration alimentaire",
-                    subtitle: "Utilisee uniquement pour detecter une incoherence et ajuster legerement les estimations."
+                    subtitle: "Utilisée uniquement pour détecter une incohérence et ajuster légèrement les estimations."
                 )
 
                 NumericProfileField(title: "Snickers standard", unit: "U", value: $viewModel.profile.calibration.snickersUnits)
                 NumericProfileField(title: "Menu Big Mac", unit: "U", value: $viewModel.profile.calibration.bigMacMenuUnits)
                 NumericProfileField(title: "Pizza moyenne", unit: "U", value: $viewModel.profile.calibration.mediumPizzaUnits)
-                NumericProfileField(title: "Bol de pates", unit: "U", value: $viewModel.profile.calibration.pastaBowlUnits)
+                NumericProfileField(title: "Bol de pâtes", unit: "U", value: $viewModel.profile.calibration.pastaBowlUnits)
 
                 calibrationStatusView
 
@@ -126,7 +138,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 16) {
                 SectionHeader(
                     title: "Analyse IA",
-                    subtitle: "Le backend evite d'exposer une cle IA dans l'app iOS."
+                    subtitle: "Le backend évite d'exposer une clé IA dans l'app iOS."
                 )
 
                 Picker("Service", selection: $viewModel.profile.foodAnalysisProvider) {
@@ -165,7 +177,7 @@ struct SettingsView: View {
                     SafetyWarningView(
                         warning: SafetyWarning(
                             title: "Endpoint manquant",
-                            message: "Renseignez une URL backend valide avant d'utiliser l'analyse IA reelle.",
+                            message: "Renseignez une URL backend valide avant d'utiliser l'analyse IA réelle.",
                             severity: .caution
                         )
                     )
@@ -180,24 +192,24 @@ struct SettingsView: View {
         case .unavailable:
             SafetyWarningView(
                 warning: SafetyWarning(
-                    title: "Calibration incomplete",
-                    message: "Renseignez au moins deux reperes pour activer un diagnostic de coherence.",
+                    title: "Calibration incomplète",
+                    message: "Renseignez au moins deux repères pour activer un diagnostic de cohérence.",
                     severity: .info
                 )
             )
         case .coherent(let factor):
             SafetyWarningView(
                 warning: SafetyWarning(
-                    title: "Calibration coherente",
-                    message: factor == 1 ? "Aucun ajustement alimentaire n'est applique." : "Un ajustement prudent de \(factor.formatted(.number.precision(.fractionLength(2))))x peut etre applique aux estimations.",
+                    title: "Calibration cohérente",
+                    message: factor == 1 ? "Aucun ajustement alimentaire n'est appliqué." : "Un ajustement prudent de \(factor.formatted(.number.precision(.fractionLength(2))))x peut être appliqué aux estimations.",
                     severity: .info
                 )
             )
         case .needsReview:
             SafetyWarningView(
                 warning: SafetyWarning(
-                    title: "Calibration a verifier",
-                    message: "Vos reponses semblent incoherentes avec votre ratio. Verifiez vos reglages medicaux avant de vous fier aux estimations.",
+                    title: "Calibration à vérifier",
+                    message: "Vos réponses semblent incohérentes avec votre ratio. Vérifiez vos réglages médicaux avant de vous fier aux estimations.",
                     severity: .caution
                 )
             )
@@ -227,7 +239,7 @@ struct SettingsView: View {
                 SafetyWarningView(
                     warning: SafetyWarning(
                         title: "Wording produit",
-                        message: "Les resultats restent des estimations et suggestions indicatives a verifier avec vos consignes medicales.",
+                        message: "Les résultats restent des estimations et suggestions indicatives à vérifier avec vos consignes médicales.",
                         severity: .caution
                     )
                 )
@@ -247,7 +259,7 @@ struct SettingsView: View {
                 }
 
                 #if DEBUG
-                SecondaryActionButton(title: "Charger donnees demo", systemImage: "shippingbox", role: nil) {
+                SecondaryActionButton(title: "Charger données démo", systemImage: "shippingbox", role: nil) {
                     appState.seedDemoHistory()
                 }
                 #endif
@@ -269,10 +281,32 @@ struct SettingsView: View {
         InputValidationRules.profileWarnings(viewModel.profile).contains { $0.severity == .critical }
     }
 
+    private var hasUnsavedChanges: Bool {
+        viewModel.profile != appState.profile
+    }
+
+    @ViewBuilder
+    private var saveStatusView: some View {
+        if hasUnsavedChanges {
+            StatusCapsule(title: "Modifications non enregistrées", systemImage: "pencil.circle", color: AppTheme.warning)
+        } else if let saveStatusMessage {
+            StatusCapsule(title: saveStatusMessage, systemImage: "checkmark.circle.fill", color: AppTheme.positive)
+        }
+    }
+
+    private func saveProfile(showConfirmation: Bool) {
+        appState.saveProfile(viewModel.profile)
+
+        guard showConfirmation else { return }
+        saveStatusMessage = "Réglages enregistrés"
+        saveFeedbackTrigger += 1
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+
     @ViewBuilder
     private var profileValidationWarnings: some View {
         let warnings = InputValidationRules.profileWarnings(viewModel.profile).filter {
-            $0.title != "Limite de dose a verifier"
+            $0.title != "Limite de dose à vérifier"
         }
 
         if !warnings.isEmpty {
@@ -286,7 +320,7 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var profileDoseLimitWarning: some View {
-        if let warning = InputValidationRules.profileWarnings(viewModel.profile).first(where: { $0.title == "Limite de dose a verifier" }) {
+        if let warning = InputValidationRules.profileWarnings(viewModel.profile).first(where: { $0.title == "Limite de dose à vérifier" }) {
             SafetyWarningView(warning: warning)
         }
     }

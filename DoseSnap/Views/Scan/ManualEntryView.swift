@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ManualEntryView: View {
     @EnvironmentObject private var appState: AppState
@@ -12,8 +13,8 @@ struct ManualEntryView: View {
             VStack(alignment: .leading, spacing: 20) {
                 ScreenHeader(
                     eyebrow: "Saisie rapide",
-                    title: "Entrez les glucides, puis controlez la suggestion.",
-                    subtitle: "Utile quand la photo n'apporte rien ou que vous connaissez deja la portion.",
+                    title: "Entrez les glucides, puis contrôlez la suggestion.",
+                    subtitle: "Utile quand la photo n'apporte rien ou que vous connaissez déjà la portion.",
                     systemImage: "square.and.pencil"
                 )
 
@@ -25,11 +26,12 @@ struct ManualEntryView: View {
                 )
             }
             .padding(20)
-            .padding(.bottom, 150)
+            .padding(.bottom, 24)
         }
         .background(AppBackground())
         .navigationTitle("Saisie")
         .navigationBarTitleDisplayMode(.inline)
+        .keyboardDoneButton()
         .onAppear {
             if viewModel.analysis == nil {
                 viewModel.configureManualEntry()
@@ -61,6 +63,7 @@ struct ManualEntryView: View {
 
     private func commitMeal(_ meal: MealEntry) {
         appState.addMeal(meal)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         pendingMeal = nil
         dismiss()
     }
