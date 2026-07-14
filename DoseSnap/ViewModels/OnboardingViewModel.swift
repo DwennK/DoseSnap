@@ -68,14 +68,16 @@ final class OnboardingViewModel: ObservableObject {
         currentStep == .review
     }
 
+    var blockingProfileWarnings: [SafetyWarning] {
+        InputValidationRules.profileWarnings(profile).filter { $0.severity == .critical }
+    }
+
     var canContinue: Bool {
         switch currentStep {
-        case .disclaimer, .glucoseUnit, .safetyLimit, .calibration, .review:
+        case .disclaimer, .glucoseUnit:
             true
-        case .insulinProfile:
-            profile.insulinToCarbRatio > 0 &&
-            profile.correctionFactor > 0 &&
-            profile.targetGlucose > 0
+        case .insulinProfile, .safetyLimit, .calibration, .review:
+            blockingProfileWarnings.isEmpty
         }
     }
 
@@ -85,7 +87,8 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     func goForward() {
-        guard let nextStep = OnboardingStep(rawValue: currentStep.rawValue + 1) else { return }
+        guard canContinue,
+              let nextStep = OnboardingStep(rawValue: currentStep.rawValue + 1) else { return }
         currentStep = nextStep
     }
 

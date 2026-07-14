@@ -121,6 +121,8 @@ struct OnboardingView: View {
                 unit: viewModel.profile.glucoseUnit.title,
                 value: $viewModel.profile.targetGlucose
             )
+
+            profileValidationWarnings
         }
     }
 
@@ -148,6 +150,8 @@ struct OnboardingView: View {
             Text("Cette limite ne rend pas une suggestion certaine. Elle sert a eviter une valeur affichee trop haute.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+
+            profileValidationWarnings
         }
     }
 
@@ -178,6 +182,19 @@ struct OnboardingView: View {
                     severity: .caution
                 )
             )
+
+            profileValidationWarnings
+        }
+    }
+
+    @ViewBuilder
+    private var profileValidationWarnings: some View {
+        if !viewModel.blockingProfileWarnings.isEmpty {
+            VStack(spacing: 10) {
+                ForEach(viewModel.blockingProfileWarnings) { warning in
+                    SafetyWarningView(warning: warning)
+                }
+            }
         }
     }
 

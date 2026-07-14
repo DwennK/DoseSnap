@@ -12,7 +12,8 @@ enum InputValidationRules {
     static func profileWarnings(_ profile: UserProfile) -> [SafetyWarning] {
         var warnings: [SafetyWarning] = []
 
-        if profile.insulinToCarbRatio < minimumPlausibleInsulinToCarbRatio ||
+        if !profile.insulinToCarbRatio.isFinite ||
+            profile.insulinToCarbRatio < minimumPlausibleInsulinToCarbRatio ||
             profile.insulinToCarbRatio > maximumPlausibleInsulinToCarbRatio {
             warnings.append(
                 SafetyWarning(
@@ -43,7 +44,9 @@ enum InputValidationRules {
             )
         }
 
-        if profile.maxSuggestedDose > maximumPlausibleDoseLimit {
+        if !profile.maxSuggestedDose.isFinite ||
+            profile.maxSuggestedDose <= 0 ||
+            profile.maxSuggestedDose > maximumPlausibleDoseLimit {
             warnings.append(
                 SafetyWarning(
                     title: "Limite de dose a verifier",
