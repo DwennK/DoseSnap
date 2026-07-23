@@ -6,6 +6,8 @@ The iOS app sends a compressed image as base64 to `POST /analyze-food`. The Work
 
 ## Local setup
 
+Requires Node.js 22 or newer.
+
 ```bash
 cd backend
 npm install

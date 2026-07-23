@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "wrangler dev",
     "dev:mock": "wrangler dev --var USE_MOCK_VISION:true",
@@ -12,18 +15,19 @@
     "check": "npm run typecheck && npm run test"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.7.2",
-    "hono": "^4.10.7",
-    "zod": "^4.2.0"
+    "@hono/zod-validator": "^0.9.0",
+    "hono": "^4.12.31",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260617.1",
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4",
-    "wrangler": "^4.101.0"
+    "@cloudflare/workers-types": "^5.20260723.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.113.0"
   },
   "overrides": {
     "esbuild": "^0.28.1",
-    "ws": "^8.21.0"
+    "sharp": "^0.35.3",
+    "ws": "^8.21.1"
   }
 }
