@@ -10,8 +10,8 @@ Requires Node.js 22 or newer.
 
 ```bash
 cd backend
-npm install
-npm run check
+pnpm install
+pnpm run check
 ```
 
 ## Local development
@@ -20,7 +20,7 @@ Without a MiniMax key, use the explicit mock backend:
 
 ```bash
 cd backend
-npm run dev:mock
+pnpm run dev:mock
 ```
 
 Then point the iOS app settings to:
@@ -36,7 +36,7 @@ For real local MiniMax calls:
 ```bash
 wrangler secret put MINIMAX_API_KEY
 wrangler secret put APP_API_TOKEN
-npm run dev
+pnpm run dev
 ```
 
 `APP_API_TOKEN` is required whenever `USE_MOCK_VISION` is not enabled. Do not deploy a real MiniMax-backed Worker without an authorization layer. A static mobile token is not a complete production control; add server-verified App Attest, user auth, or another backend-issued token strategy before public use.
@@ -48,7 +48,7 @@ npm run dev
 ```bash
 wrangler secret put MINIMAX_API_KEY
 wrangler secret put APP_API_TOKEN
-npm run deploy
+pnpm run deploy
 ```
 
 Set the iOS backend endpoint to:
